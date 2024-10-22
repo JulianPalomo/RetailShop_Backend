@@ -29,4 +29,3 @@ public class ProductEntity {
     @JoinColumn(name = "category_id", nullable = false)  // Referencia a la categoría
     private CategoryEntity category;  // Cada producto tiene una única categoría
 }
-
