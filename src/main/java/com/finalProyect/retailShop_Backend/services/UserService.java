@@ -42,4 +42,8 @@ public class UserService {
     public void deleteUser(Long id) {
         userRepository.deleteById(id);
     }
+    public List<UserEntity> getUserByName(String name) {
+        return userRepository.findByName(name);
+    }
+
 }
