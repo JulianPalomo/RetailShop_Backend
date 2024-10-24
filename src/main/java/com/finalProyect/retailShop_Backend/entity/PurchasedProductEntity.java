@@ -15,17 +15,11 @@ import java.util.List;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-public class PurchasedProductEntity {
+public class PurchasedProductEntity extends ProductEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-
-    @Column(nullable = false)
-    private String name;
-
-    @Column(nullable = false)
-    private BigDecimal price;
 
     @OneToMany(mappedBy = "purchasedProduct", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<PurchasedProductXCartEntity> orders;  // Relación con ProductXOrderEntity
@@ -36,13 +30,7 @@ public class PurchasedProductEntity {
     @Column(nullable = false)
     private BigDecimal unitPrice;
 
-    @ManyToOne
-    @JoinColumn(name = "category_id", nullable = false)  // Referencia a la categoría
-    private CategoryEntity category;  // Cada producto tiene una única categoría
-
-
-    public BigDecimal calculateSubtotal() {
-        return unitPrice.multiply(BigDecimal.valueOf(quantity));
-    }
+    @Column(nullable = false)
+    private BigDecimal subTotal;
 
 }

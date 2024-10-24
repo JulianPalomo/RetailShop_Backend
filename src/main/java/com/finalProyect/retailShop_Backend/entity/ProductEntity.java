@@ -10,6 +10,7 @@ import java.math.BigDecimal;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
+@Inheritance(strategy = InheritanceType.JOINED)
 public class ProductEntity {
 
     @Id
@@ -24,6 +25,12 @@ public class ProductEntity {
 
     @Column(nullable = false)
     private int stock;
+
+    @Column()
+    private String description;
+
+    @Column(nullable = false)
+    private boolean isActive;
 
     @ManyToOne
     @JoinColumn(name = "category_id", nullable = false)  // Referencia a la categoría
