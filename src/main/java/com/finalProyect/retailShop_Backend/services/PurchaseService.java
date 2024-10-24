@@ -1,5 +1,7 @@
 package com.finalProyect.retailShop_Backend.services;
 
+import com.finalProyect.retailShop_Backend.entity.CartEntity;
+import com.finalProyect.retailShop_Backend.entity.PurchasedProductEntity;
 import com.finalProyect.retailShop_Backend.entity.PurchasedProductXCartEntity;
 import com.finalProyect.retailShop_Backend.entity.StockEntity;
 import com.finalProyect.retailShop_Backend.repositories.CartRepository;
@@ -29,8 +31,8 @@ public class PurchaseService {
         productStockRepository.save(stock);
 
         // Paso 2: Registrar el producto en el carrito
-        PurchasedProductXCartEntity purchasedProduct = new PurchasedProductXCartEntity();
-        purchasedProduct.setOrder(cart);
+        PurchasedProductEntity purchasedProduct = new PurchasedProductEntity();
+        purchasedProduct.setOrders(cart);
         purchasedProduct.setQuantity(quantity);
         cart.getProducts().add(purchasedProduct);
 
