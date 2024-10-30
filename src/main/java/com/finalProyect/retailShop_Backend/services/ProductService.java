@@ -2,7 +2,6 @@ package com.finalProyect.retailShop_Backend.services;
 
 import com.finalProyect.retailShop_Backend.entities.products.ProductEntity;
 import com.finalProyect.retailShop_Backend.repositories.ProductRepository;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -11,9 +10,11 @@ import java.util.Optional;
 @Service
 public class ProductService {
 
-    @Autowired
-    private ProductRepository productRepository;
+    private final ProductRepository productRepository;
 
+    public ProductService(ProductRepository productRepository){
+        this.productRepository = productRepository;
+    }
 
 
     public List<ProductEntity> getAllProducts() {
