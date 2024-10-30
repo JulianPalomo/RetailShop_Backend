@@ -19,9 +19,6 @@ public class PurchasedProductEntity extends ProductEntity {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @OneToMany(mappedBy = "purchasedProduct", cascade = CascadeType.ALL, orphanRemoval = true)
-    private List<PurchasedProductXCartEntity> orders;  // Relación con ProductXOrderEntity
-
     @Column(nullable = false)
     private int quantity;
 
@@ -30,5 +27,4 @@ public class PurchasedProductEntity extends ProductEntity {
 
     @Column(nullable = false)
     private BigDecimal subTotal;
-
 }

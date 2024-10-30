@@ -23,8 +23,7 @@ public class StockEntity {
     @Column(nullable = false)
     private int stock;
 
-    @Column(nullable = false)
-
-    private List<ProductEntity> producto;
-
+    @OneToOne
+    @JoinColumn(name = "product_id", nullable = false)
+    private ProductEntity product;
 }

@@ -20,10 +20,10 @@ public class PurchasedProductXCartEntity {
         private Long id;
 
         @ManyToOne
-        @JoinColumn(name = "order_id", nullable = false)
-        private CartEntity order;
+        @JoinColumn(name = "cart_id", nullable = false)
+        private CartEntity cart;
 
         @ManyToOne
-        @JoinColumn(name = "product_id", nullable = false)
+        @JoinColumn(name = "purchased_product_id", nullable = false)
         private PurchasedProductEntity purchasedProduct;
 }
