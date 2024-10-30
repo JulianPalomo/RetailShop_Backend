@@ -14,6 +14,8 @@ public class ProductService {
     @Autowired
     private ProductRepository productRepository;
 
+
+
     public List<ProductEntity> getAllProducts() {
         return productRepository.findAll();
     }
@@ -32,7 +34,6 @@ public class ProductService {
             ProductEntity product = productOptional.get();
             product.setName(updatedProduct.getName());
             product.setPrice(updatedProduct.getPrice());
-            product.setStock(updatedProduct.getStock());
             product.setCategory(updatedProduct.getCategory());
             return productRepository.save(product);
         } else {
