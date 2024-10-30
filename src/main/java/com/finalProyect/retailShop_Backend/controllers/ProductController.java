@@ -1,6 +1,6 @@
 package com.finalProyect.retailShop_Backend.controllers;
 
-import com.finalProyect.retailShop_Backend.entity.ProductEntity;
+import com.finalProyect.retailShop_Backend.entities.products.ProductEntity;
 import com.finalProyect.retailShop_Backend.services.ProductService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;

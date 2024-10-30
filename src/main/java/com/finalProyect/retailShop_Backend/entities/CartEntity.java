@@ -1,4 +1,7 @@
-package com.finalProyect.retailShop_Backend.entity;
+package com.finalProyect.retailShop_Backend.entities;
+import com.finalProyect.retailShop_Backend.entities.persons.CustomerEntity;
+import com.finalProyect.retailShop_Backend.entities.persons.UserEntity;
+import com.finalProyect.retailShop_Backend.entities.products.PurchasedProductXCartEntity;
 import com.finalProyect.retailShop_Backend.enums.CartStatus;
 import jakarta.persistence.*;
 import lombok.*;
@@ -34,8 +37,9 @@ public class CartEntity {
     @Column(nullable = false)
     private String paymentMethod;
 
-    @Column(nullable = false)
-    private String customerDNI;
+    @ManyToOne
+    @JoinColumn(name = "customer_id", nullable = true)  // Nullable, ya que no siempre estará asociado
+    private CustomerEntity customer;
 
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)

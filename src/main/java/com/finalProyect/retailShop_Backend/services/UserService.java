@@ -1,6 +1,6 @@
 package com.finalProyect.retailShop_Backend.services;
 
-import com.finalProyect.retailShop_Backend.entity.UserEntity;
+import com.finalProyect.retailShop_Backend.entities.persons.UserEntity;
 import com.finalProyect.retailShop_Backend.repositories.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;

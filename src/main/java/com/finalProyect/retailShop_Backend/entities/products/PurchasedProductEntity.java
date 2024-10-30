@@ -1,10 +1,9 @@
-package com.finalProyect.retailShop_Backend.entity;
+package com.finalProyect.retailShop_Backend.entities.products;
 
 import jakarta.persistence.*;
 import lombok.*;
 
 import java.math.BigDecimal;
-import java.util.List;
 
 @EqualsAndHashCode(callSuper = true)
 @Entity

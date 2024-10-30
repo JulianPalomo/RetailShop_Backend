@@ -1,12 +1,11 @@
-package com.finalProyect.retailShop_Backend.entity;
+package com.finalProyect.retailShop_Backend.entities;
 
+import com.finalProyect.retailShop_Backend.entities.products.ProductEntity;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-
-import java.util.List;
 
 @Entity
 @Table(name = "stock")

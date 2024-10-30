@@ -1,6 +1,9 @@
 package com.finalProyect.retailShop_Backend.services;
 
-import com.finalProyect.retailShop_Backend.entity.*;
+import com.finalProyect.retailShop_Backend.entities.*;
+import com.finalProyect.retailShop_Backend.entities.persons.UserEntity;
+import com.finalProyect.retailShop_Backend.entities.products.PurchasedProductEntity;
+import com.finalProyect.retailShop_Backend.entities.products.PurchasedProductXCartEntity;
 import com.finalProyect.retailShop_Backend.enums.CartStatus;
 import com.finalProyect.retailShop_Backend.repositories.CartRepository;
 import com.finalProyect.retailShop_Backend.repositories.StockRepository;
@@ -10,7 +13,6 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
-import java.util.Optional;
 
 @Service
 public class PurchaseService {
@@ -24,6 +26,21 @@ public class PurchaseService {
         this.cartRepository = cartRepository;
         this.userRepository = userRepository;
     }
+
+
+    public void finalizeCart(Long cartId) {
+        CartEntity cart = cartRepository.findById(cartId)
+                .orElseThrow(() -> new RuntimeException("Carrito no encontrado"));
+
+        if (cart.getCustomer() == null) {
+            throw new RuntimeException("No se puede facturar sin un cliente asignado");
+        }
+
+        // Cambiar el estado del carrito a "COMPLETADO" o el estado que corresponda
+        cart.setCartStatus(CartStatus.COMPLETED);
+        cartRepository.save(cart);
+    }
+
 
     @Transactional
     public void purchaseProduct(Long productId, int quantity, Long userId) {
@@ -40,9 +57,9 @@ public class PurchaseService {
                 .orElseGet(() -> createNewCart(userRepository.findById(userId).orElseThrow(() -> new RuntimeException("Usuario no encontrado"))));
     }
 
-    private CartEntity createNewCart(UserEntity userId) {
+    private CartEntity createNewCart(UserEntity user) {
         CartEntity cart = new CartEntity();
-        cart.setUser(userId);  // Asocia el carrito al usuario
+        cart.setUser(user);  // Asocia el carrito al usuario
         cart.setCartStatus(CartStatus.PENDING);
         cart.setPurchasedProducts(new ArrayList<>());
         cart.setTotal(BigDecimal.ZERO);

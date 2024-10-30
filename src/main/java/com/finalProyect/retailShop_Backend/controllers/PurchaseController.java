@@ -1,7 +1,6 @@
 package com.finalProyect.retailShop_Backend.controllers;
 
 import com.finalProyect.retailShop_Backend.DTO.PurchaseRequestDto;
-import com.finalProyect.retailShop_Backend.entity.CartEntity;
 import com.finalProyect.retailShop_Backend.services.CartService;
 import com.finalProyect.retailShop_Backend.services.PurchaseService;
 import org.springframework.http.HttpStatus;
@@ -32,10 +31,4 @@ public class PurchaseController {
         }
     }
 
-    @GetMapping("/{userId}/cart")
-    public ResponseEntity<CartEntity> getCart(@PathVariable Long userId) {
-        CartEntity cart = cartService.getCartForUser(userId)
-                .orElseThrow(() -> new RuntimeException("Carrito no encontrado para el usuario"));
-        return ResponseEntity.ok(cart);
-    }
 }
