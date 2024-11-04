@@ -32,11 +32,16 @@ public class ProductService {
             ProductEntity product = productOptional.get();
             product.setName(updatedProduct.getName());
             product.setPrice(updatedProduct.getPrice());
-            product.setStock(updatedProduct.getStock());
             product.setCategory(updatedProduct.getCategory());
+
+            // Actualizar el stock si existe
+            if (product.getStock() != null && updatedProduct.getStock() != null) {
+                product.getStock().setStock(updatedProduct.getStock().getStock());
+            }
+
             return productRepository.save(product);
         } else {
-            return null; // O lanzar una excepción personalizada
+            return null; // o puede ser una excepcion aca
         }
     }
 

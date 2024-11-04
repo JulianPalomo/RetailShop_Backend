@@ -2,17 +2,17 @@ package com.finalProyect.retailShop_Backend.entity;
 
 import jakarta.persistence.*;
 import lombok.*;
+import lombok.experimental.SuperBuilder;
 
 import java.math.BigDecimal;
 import java.util.List;
-
 @EqualsAndHashCode(callSuper = true)
 @Entity
 @Table(name = "purchased_products")
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-@Builder
+@SuperBuilder
 public class PurchasedProductEntity extends ProductEntity {
 
     @Id

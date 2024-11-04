@@ -2,6 +2,8 @@ package com.finalProyect.retailShop_Backend.entity;
 
 import jakarta.persistence.*;
 import lombok.*;
+import lombok.experimental.SuperBuilder;
+
 import java.math.BigDecimal;
 
 @Entity
@@ -9,7 +11,7 @@ import java.math.BigDecimal;
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-@Builder
+@SuperBuilder
 @Inheritance(strategy = InheritanceType.JOINED)
 public class ProductEntity {
 
@@ -33,4 +35,6 @@ public class ProductEntity {
     @JoinColumn(name = "category_id", nullable = false)
     private CategoryEntity category;
 
+    @OneToOne(mappedBy = "product", cascade = CascadeType.ALL, orphanRemoval = true)
+    private StockEntity stock;
 }
