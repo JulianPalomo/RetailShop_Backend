@@ -37,7 +37,7 @@ public class PurchaseService {
         }
 
         // Cambiar el estado del carrito a "COMPLETADO" o el estado que corresponda
-        cart.setCartStatus(CartStatus.COMPLETED);
+        cart.setStatus(CartStatus.COMPLETED);
         cartRepository.save(cart);
     }
 
@@ -60,7 +60,7 @@ public class PurchaseService {
     private CartEntity createNewCart(UserEntity user) {
         CartEntity cart = new CartEntity();
         cart.setUser(user);  // Asocia el carrito al usuario
-        cart.setCartStatus(CartStatus.PENDING);
+        cart.setStatus(CartStatus.PENDING);
         cart.setPurchasedProducts(new ArrayList<>());
         cart.setTotal(BigDecimal.ZERO);
         return cartRepository.save(cart);

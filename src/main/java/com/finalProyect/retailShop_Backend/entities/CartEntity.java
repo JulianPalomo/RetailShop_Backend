@@ -43,5 +43,5 @@ public class CartEntity {
 
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)
-    private CartStatus cartStatus = CartStatus.PENDING;
+    private CartStatus status = CartStatus.PENDING;
 }
