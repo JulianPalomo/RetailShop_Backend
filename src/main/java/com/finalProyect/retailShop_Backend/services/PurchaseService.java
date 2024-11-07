@@ -17,7 +17,6 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
-
 @Service
 public class PurchaseService {
 
@@ -46,6 +45,7 @@ public class PurchaseService {
 
     @Transactional
     public void addOrUpdateProductInCart(Long productId, Long quantity, Long userId) {
+
         CartEntity cart = findOrCreateCartForUser(userId);
 
         // Verificar stock antes de proceder con la compra
