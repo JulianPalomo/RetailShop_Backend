@@ -6,8 +6,6 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-import java.util.List;
-
 @Entity
 @Table(name = "stock")
 @Data  // Genera automáticamente getters, setters, equals, hashcode y toString

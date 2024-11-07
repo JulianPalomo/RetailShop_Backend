@@ -2,7 +2,9 @@ package com.finalProyect.retailShop_Backend.controllers;
 
 import com.finalProyect.retailShop_Backend.entity.ProductEntity;
 import com.finalProyect.retailShop_Backend.services.ProductService;
+import jakarta.persistence.EntityNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -28,17 +30,18 @@ public class ProductController {
     }
 
     @PostMapping
-    public ProductEntity createProduct(@RequestBody ProductEntity product) {
-        return productService.createProduct(product);
+    public ResponseEntity<ProductEntity> createProduct(@RequestBody ProductEntity product) {
+        ProductEntity createdProduct = productService.createProduct(product);
+        return ResponseEntity.status(HttpStatus.CREATED).body(createdProduct);
     }
 
     @PutMapping("/{id}")
     public ResponseEntity<ProductEntity> updateProduct(@PathVariable Long id, @RequestBody ProductEntity product) {
-        ProductEntity updatedProduct = productService.updateProduct(id, product);
-        if (updatedProduct != null) {
+        try {
+            ProductEntity updatedProduct = productService.updateProduct(id, product);
             return ResponseEntity.ok(updatedProduct);
-        } else {
-            return ResponseEntity.notFound().build();
+        } catch (EntityNotFoundException e) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
         }
     }
 

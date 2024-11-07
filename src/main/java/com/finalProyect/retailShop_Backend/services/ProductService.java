@@ -34,6 +34,9 @@ public class ProductService {
             product.setPrice(updatedProduct.getPrice());
             product.setCategory(updatedProduct.getCategory());
 
+            if (updatedProduct.getDescription() != null) {
+                product.setDescription(updatedProduct.getDescription());
+            }
             // Actualizar el stock si existe
             if (product.getStock() != null && updatedProduct.getStock() != null) {
                 product.getStock().setStock(updatedProduct.getStock().getStock());

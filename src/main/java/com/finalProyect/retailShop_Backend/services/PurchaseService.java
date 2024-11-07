@@ -2,6 +2,7 @@ package com.finalProyect.retailShop_Backend.services;
 
 import com.finalProyect.retailShop_Backend.entity.*;
 import com.finalProyect.retailShop_Backend.enums.CartStatus;
+import com.finalProyect.retailShop_Backend.exception.InsufficientStockException;
 import com.finalProyect.retailShop_Backend.repositories.CartRepository;
 import com.finalProyect.retailShop_Backend.repositories.StockRepository;
 import com.finalProyect.retailShop_Backend.repositories.UserRepository;
@@ -52,12 +53,11 @@ public class PurchaseService {
     private void updateStock(Long productId, int quantity) {
         StockEntity stock = stockRepository.findByProductId(productId);
         if (stock == null || stock.getStock() < quantity) {
-            throw new RuntimeException("No hay suficiente stock disponible");
+            throw new InsufficientStockException("No hay suficiente stock disponible");
         }
         stock.setStock(stock.getStock() - quantity);
         stockRepository.save(stock);
     }
-
     private void addOrUpdateProductInCart(CartEntity cart, Long productId, int quantity) {
         PurchasedProductXCartEntity existingProductInCart = findProductInCart(cart, productId);
 
