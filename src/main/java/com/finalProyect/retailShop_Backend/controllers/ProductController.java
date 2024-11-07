@@ -1,5 +1,6 @@
 package com.finalProyect.retailShop_Backend.controllers;
 
+import com.finalProyect.retailShop_Backend.DTO.ProductWithDetailsDTO;
 import com.finalProyect.retailShop_Backend.entities.products.ProductEntity;
 import com.finalProyect.retailShop_Backend.services.ProductService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -16,23 +17,24 @@ public class ProductController {
     @Autowired
     private ProductService productService;
 
-    @GetMapping
-    public List<ProductEntity> getAllProducts() {
+    @GetMapping //TODO cambiar el dato con el que trabaja (ProductWithDetailsDTO)
+    public List<ProductWithDetailsDTO> getAllProducts() {
         return productService.getAllProducts();
     }
 
-    @GetMapping("/{id}")
+    @GetMapping("/{id}") //TODO cambiar el dato con el que trabaja (ProductWithDetailsDTO)
     public ResponseEntity<ProductEntity> getProductById(@PathVariable Long id) {
         Optional<ProductEntity> product = productService.getProductById(id);
         return product.map(ResponseEntity::ok).orElseGet(() -> ResponseEntity.notFound().build());
     }
 
-    @GetMapping("/filter")
-    public List<ProductEntity> filterProducts(
+    @GetMapping("/filter") //TODO cambiar el dato con el que trabaja (ProductWithDetailsDTO)
+    public List<ProductWithDetailsDTO> filterProducts(
             @RequestParam(required = false) Long id,
             @RequestParam(required = false) String name,
-            @RequestParam(required = false) String category) {
-        return productService.filterProducts(id, name, category);
+            @RequestParam(required = false) String category,
+            @RequestParam(required = false) String brandName){
+        return productService.filterProductsWithParams(id, name, category,brandName);
     }
 
     @PostMapping
@@ -50,7 +52,7 @@ public class ProductController {
         }
     }
 
-    @DeleteMapping("/{id}")
+    @DeleteMapping("/{id}") //TODO cambia el valor de bdd a no activo
     public ResponseEntity<Void> deleteProduct(@PathVariable Long id) {
         productService.deleteProduct(id);
         return ResponseEntity.noContent().build();

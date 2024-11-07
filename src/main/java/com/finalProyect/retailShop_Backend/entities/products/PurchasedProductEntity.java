@@ -14,7 +14,6 @@ import java.math.BigDecimal;
 @AllArgsConstructor
 @SuperBuilder
 public class PurchasedProductEntity extends ProductEntity {
-
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;

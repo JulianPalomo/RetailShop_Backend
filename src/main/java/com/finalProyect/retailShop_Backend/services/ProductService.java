@@ -1,5 +1,6 @@
 package com.finalProyect.retailShop_Backend.services;
 
+import com.finalProyect.retailShop_Backend.DTO.ProductWithDetailsDTO;
 import com.finalProyect.retailShop_Backend.entities.products.ProductEntity;
 import com.finalProyect.retailShop_Backend.repositories.ProductRepository;
 import org.springframework.stereotype.Service;
@@ -16,8 +17,8 @@ public class ProductService {
         this.productRepository = productRepository;
     }
 
-    public List<ProductEntity> getAllProducts() {
-        return productRepository.findAll();
+    public List<ProductWithDetailsDTO> getAllProducts() {
+        return productRepository.getAllProducts();
     }
 
     public Optional<ProductEntity> getProductById(Long id) {
@@ -41,8 +42,8 @@ public class ProductService {
         }
     }
 
-    public List<ProductEntity> filterProducts(Long id, String name, String category) {
-        return productRepository.filterProducts(id, name, category);
+    public List<ProductWithDetailsDTO> filterProductsWithParams(Long id, String name, String category, String brandName) {
+        return productRepository.filterProductsWithParams(id, name, category, brandName);
     }
 
     public void deleteProduct(Long id) {
