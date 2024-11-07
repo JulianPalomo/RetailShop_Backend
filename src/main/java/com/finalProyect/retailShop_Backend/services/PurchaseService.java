@@ -2,9 +2,13 @@ package com.finalProyect.retailShop_Backend.services;
 
 import com.finalProyect.retailShop_Backend.entities.*;
 import com.finalProyect.retailShop_Backend.entities.persons.UserEntity;
+import com.finalProyect.retailShop_Backend.entities.products.ProductEntity;
 import com.finalProyect.retailShop_Backend.entities.products.PurchasedProductEntity;
 import com.finalProyect.retailShop_Backend.entities.products.PurchasedProductXCartEntity;
 import com.finalProyect.retailShop_Backend.enums.CartStatus;
+import com.finalProyect.retailShop_Backend.exceptions.BadRequestException;
+import com.finalProyect.retailShop_Backend.exceptions.InsufficientStockException;
+import com.finalProyect.retailShop_Backend.exceptions.NotFoundException;
 import com.finalProyect.retailShop_Backend.repositories.CartRepository;
 import com.finalProyect.retailShop_Backend.repositories.StockRepository;
 import com.finalProyect.retailShop_Backend.repositories.UserRepository;
@@ -27,13 +31,12 @@ public class PurchaseService {
         this.userRepository = userRepository;
     }
 
-
     public void finalizeCart(Long cartId) {
         CartEntity cart = cartRepository.findById(cartId)
-                .orElseThrow(() -> new RuntimeException("Carrito no encontrado"));
+                .orElseThrow(() -> new NotFoundException("Carrito no encontrado"));
 
         if (cart.getCustomer() == null) {
-            throw new RuntimeException("No se puede facturar sin un cliente asignado");
+            throw new BadRequestException("No se puede facturar sin un cliente asignado");
         }
 
         // Cambiar el estado del carrito a "COMPLETADO" o el estado que corresponda
@@ -41,20 +44,50 @@ public class PurchaseService {
         cartRepository.save(cart);
     }
 
-
     @Transactional
-    public void purchaseProduct(Long productId, int quantity, Long userId) {
+    public void addOrUpdateProductInCart(Long productId, Long quantity, Long userId) {
         CartEntity cart = findOrCreateCartForUser(userId);
 
+        // Verificar stock antes de proceder con la compra
         updateStock(productId, quantity);
         addOrUpdateProductInCart(cart, productId, quantity);
 
         cartRepository.save(cart);
     }
 
+    @Transactional
+    public void removeProductFromCart(Long productId, Long userId) {
+        CartEntity cart = findOrCreateCartForUser(userId);
+
+        // Buscar el producto en el carrito
+        PurchasedProductXCartEntity productInCart = findProductInCart(cart, productId);
+        if (productInCart == null) {
+            throw new NotFoundException("Producto no encontrado en el carrito");
+        }
+
+        // Eliminar el producto del carrito
+        cart.getPurchasedProducts().remove(productInCart);
+
+        // Sumar el stock del producto eliminado
+        updateStockForRemoval(productId, productInCart.getPurchasedProduct().getQuantity());
+
+        // Guardar los cambios en el carrito
+        cartRepository.save(cart);
+    }
+
+    private void updateStockForRemoval(Long productId, Long quantity) {
+        StockEntity stock = stockRepository.findByProductId(productId);
+        if (stock == null) {
+            throw new NotFoundException("Producto no encontrado en el inventario");
+        }
+        stock.setQuantity(stock.getQuantity() + quantity);
+        stockRepository.save(stock);
+    }
+
     private CartEntity findOrCreateCartForUser(Long userId) {
         return cartRepository.findByUserIdAndStatus(userId, CartStatus.PENDING)
-                .orElseGet(() -> createNewCart(userRepository.findById(userId).orElseThrow(() -> new RuntimeException("Usuario no encontrado"))));
+                .orElseGet(() -> createNewCart(userRepository.findById(userId)
+                        .orElseThrow(() -> new NotFoundException("Usuario no encontrado"))));
     }
 
     private CartEntity createNewCart(UserEntity user) {
@@ -66,16 +99,19 @@ public class PurchaseService {
         return cartRepository.save(cart);
     }
 
-    private void updateStock(Long productId, int quantity) {
+    private void updateStock(Long productId, Long quantity) {
         StockEntity stock = stockRepository.findByProductId(productId);
-        if (stock == null || stock.getStock() < quantity) {
-            throw new RuntimeException("No hay suficiente stock disponible");
+        if (stock == null) {
+            throw new NotFoundException("Producto no encontrado en el inventario");
         }
-        stock.setStock(stock.getStock() - quantity);
+        if (stock.getQuantity() < quantity) {
+            throw new InsufficientStockException("No hay suficiente stock disponible");
+        }
+        stock.setQuantity(stock.getQuantity() - quantity);
         stockRepository.save(stock);
     }
 
-    private void addOrUpdateProductInCart(CartEntity cart, Long productId, int quantity) {
+    private void addOrUpdateProductInCart(CartEntity cart, Long productId, Long quantity) {
         PurchasedProductXCartEntity existingProductInCart = findProductInCart(cart, productId);
 
         if (existingProductInCart != null) {
@@ -92,14 +128,17 @@ public class PurchaseService {
                 .orElse(null);
     }
 
-    private void updateProductQuantity(PurchasedProductXCartEntity purchasedProductXCart, int quantity) {
+    private void updateProductQuantity(PurchasedProductXCartEntity purchasedProductXCart, Long quantity) {
         PurchasedProductEntity purchasedProduct = purchasedProductXCart.getPurchasedProduct();
         purchasedProduct.setQuantity(purchasedProduct.getQuantity() + quantity);
         purchasedProduct.setSubTotal(purchasedProduct.getUnitPrice().multiply(BigDecimal.valueOf(purchasedProduct.getQuantity())));
     }
 
-    private void addNewProductToCart(CartEntity cart, Long productId, int quantity) {
+    private void addNewProductToCart(CartEntity cart, Long productId, Long quantity) {
         StockEntity stock = stockRepository.findByProductId(productId);
+        if (stock == null) {
+            throw new NotFoundException("Producto no encontrado en el inventario");
+        }
 
         PurchasedProductEntity purchasedProduct = new PurchasedProductEntity();
         purchasedProduct.setId(productId);
@@ -114,3 +153,4 @@ public class PurchaseService {
         cart.getPurchasedProducts().add(purchasedProductXCart);
     }
 }
+

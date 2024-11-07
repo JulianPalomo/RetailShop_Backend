@@ -20,7 +20,7 @@ public class PurchasedProductEntity extends ProductEntity {
     private Long id;
 
     @Column(nullable = false)
-    private int quantity;
+    private Long quantity;
 
     @Column(nullable = false)
     private BigDecimal unitPrice;

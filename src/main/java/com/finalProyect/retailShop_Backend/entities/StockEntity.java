@@ -20,7 +20,7 @@ public class StockEntity {
     private Long id;
 
     @Column(nullable = false)
-    private int stock;
+    private Long quantity;
 
     @OneToOne
     @JoinColumn(name = "product_id", nullable = false)
