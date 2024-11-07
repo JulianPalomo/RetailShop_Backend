@@ -35,13 +35,15 @@ public class ProductService {
             product.setName(updatedProduct.getName());
             product.setPrice(updatedProduct.getPrice());
             product.setCategory(updatedProduct.getCategory());
-            product.setDescription(updatedProduct.getDescription());
             return productRepository.save(product);
         } else {
             return null; // O lanzar una excepción personalizada
         }
     }
 
+    public List<ProductEntity> filterProducts(Long id, String name, String category) {
+        return productRepository.filterProducts(id, name, category);
+    }
 
     public void deleteProduct(Long id) {
         productRepository.deleteById(id);

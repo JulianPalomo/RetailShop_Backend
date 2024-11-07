@@ -27,6 +27,14 @@ public class ProductController {
         return product.map(ResponseEntity::ok).orElseGet(() -> ResponseEntity.notFound().build());
     }
 
+    @GetMapping("/filter")
+    public List<ProductEntity> filterProducts(
+            @RequestParam(required = false) Long id,
+            @RequestParam(required = false) String name,
+            @RequestParam(required = false) String category) {
+        return productService.filterProducts(id, name, category);
+    }
+
     @PostMapping
     public ProductEntity createProduct(@RequestBody ProductEntity product) {
         return productService.createProduct(product);

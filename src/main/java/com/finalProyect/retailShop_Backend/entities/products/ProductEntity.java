@@ -24,8 +24,6 @@ public class ProductEntity {
         this. isActive = isActive;
         this.category = category;
     }
-
-
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
@@ -35,9 +33,6 @@ public class ProductEntity {
 
     @Column(nullable = false)
     private BigDecimal price;
-
-    @Column()
-    private String description;
 
     @Column(nullable = false)
     private boolean isActive;
