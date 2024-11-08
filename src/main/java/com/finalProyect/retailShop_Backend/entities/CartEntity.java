@@ -1,7 +1,6 @@
 package com.finalProyect.retailShop_Backend.entities;
-import com.finalProyect.retailShop_Backend.entities.persons.CustomerEntity;
 import com.finalProyect.retailShop_Backend.entities.persons.UserEntity;
-import com.finalProyect.retailShop_Backend.entities.products.PurchasedProductXCartEntity;
+import com.finalProyect.retailShop_Backend.entities.products.CartProductEntity;
 import com.finalProyect.retailShop_Backend.enums.CartStatus;
 import jakarta.persistence.*;
 import lombok.*;
@@ -10,7 +9,7 @@ import java.time.LocalDate;
 import java.util.List;
 
 @Entity
-@Table(name = "purchases")
+@Table(name = "carts")
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
@@ -23,25 +22,22 @@ public class CartEntity {
 
     @ManyToOne
     @JoinColumn(name = "user_id", nullable = false)
-    private UserEntity user;
+    private UserEntity user;  // Vendedor que maneja el carrito
 
     @OneToMany(mappedBy = "cart", cascade = CascadeType.ALL, orphanRemoval = true)
-    private List<PurchasedProductXCartEntity> purchasedProducts;  // Relación con PurchasedProductXCartEntity
+    private List<CartProductEntity> cartProducts;  // Relación con los productos en el carrito
 
     @Column(nullable = false)
-    private BigDecimal total;
+    private BigDecimal total;  // Total del carrito
 
     @Column(nullable = false)
-    private LocalDate date;
+    private LocalDate date;  // Fecha en la que se genera el carrito
 
     @Column(nullable = false)
-    private String paymentMethod;
+    private String paymentMethod;  // Método de pago
 
-    @ManyToOne
-    @JoinColumn(name = "customer_id", nullable = true)  // Nullable, ya que no siempre estará asociado
-    private CustomerEntity customer;
 
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)
-    private CartStatus status = CartStatus.PENDING;
+    private CartStatus status = CartStatus.PENDING;  // Estado del carrito
 }

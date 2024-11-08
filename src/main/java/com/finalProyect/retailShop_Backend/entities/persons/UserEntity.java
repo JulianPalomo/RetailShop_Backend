@@ -19,3 +19,4 @@ public class UserEntity extends PersonEntity {
     private boolean isAdmin;
 
 }
+

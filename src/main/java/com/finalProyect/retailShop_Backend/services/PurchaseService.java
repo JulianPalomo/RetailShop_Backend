@@ -1,156 +1,112 @@
 package com.finalProyect.retailShop_Backend.services;
 
 import com.finalProyect.retailShop_Backend.entities.*;
-import com.finalProyect.retailShop_Backend.entities.persons.UserEntity;
+
+import com.finalProyect.retailShop_Backend.entities.products.CartProductEntity;
 import com.finalProyect.retailShop_Backend.entities.products.ProductEntity;
-import com.finalProyect.retailShop_Backend.entities.products.PurchasedProductEntity;
-import com.finalProyect.retailShop_Backend.entities.products.PurchasedProductXCartEntity;
 import com.finalProyect.retailShop_Backend.enums.CartStatus;
-import com.finalProyect.retailShop_Backend.exceptions.BadRequestException;
-import com.finalProyect.retailShop_Backend.exceptions.InsufficientStockException;
-import com.finalProyect.retailShop_Backend.exceptions.NotFoundException;
-import com.finalProyect.retailShop_Backend.repositories.CartRepository;
-import com.finalProyect.retailShop_Backend.repositories.StockRepository;
-import com.finalProyect.retailShop_Backend.repositories.UserRepository;
+import com.finalProyect.retailShop_Backend.repositories.*;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.math.BigDecimal;
-import java.util.ArrayList;
+
 @Service
+@Transactional
 public class PurchaseService {
 
-    private final StockRepository stockRepository;
-    private final CartRepository cartRepository;
-    private final UserRepository userRepository;
+    @Autowired
+    private CartRepository cartRepository;
 
-    public PurchaseService(StockRepository stockRepository, CartRepository cartRepository, UserRepository userRepository) {
-        this.stockRepository = stockRepository;
-        this.cartRepository = cartRepository;
-        this.userRepository = userRepository;
-    }
+    @Autowired
+    private ProductRepository productRepository;
 
-    public void finalizeCart(Long cartId) {
+    @Autowired
+    private CartProductRepository cartProductRepository;
+
+    // Método para agregar un producto al carrito
+    public CartEntity addProductToCart(Long cartId, Long productId, Long quantity) {
         CartEntity cart = cartRepository.findById(cartId)
-                .orElseThrow(() -> new NotFoundException("Carrito no encontrado"));
+                .orElseThrow(() -> new RuntimeException("Carrito no encontrado"));
 
-        if (cart.getCustomer() == null) {
-            throw new BadRequestException("No se puede facturar sin un cliente asignado");
-        }
+        ProductEntity product = productRepository.findById(productId)
+                .orElseThrow(() -> new RuntimeException("Producto no encontrado"));
 
-        // Cambiar el estado del carrito a "COMPLETADO" o el estado que corresponda
-        cart.setStatus(CartStatus.COMPLETED);
-        cartRepository.save(cart);
-    }
+        checkAndDecreaseStock(product, quantity);
 
-    @Transactional
-    public void addOrUpdateProductInCart(Long productId, Long quantity, Long userId) {
+        BigDecimal unitPrice = product.getPrice();
+        BigDecimal subTotal = unitPrice.multiply(BigDecimal.valueOf(quantity));
 
-        CartEntity cart = findOrCreateCartForUser(userId);
+        CartProductEntity cartProduct = new CartProductEntity();
+        cartProduct.setCart(cart);
+        cartProduct.setProduct(product);
+        cartProduct.setQuantity(quantity);
+        cartProduct.setUnitPrice(unitPrice);
+        cartProduct.setSubTotal(subTotal);
 
-        // Verificar stock antes de proceder con la compra
-        updateStock(productId, quantity);
-        addOrUpdateProductInCart(cart, productId, quantity);
+        cartProductRepository.save(cartProduct);
 
-        cartRepository.save(cart);
-    }
-
-    @Transactional
-    public void removeProductFromCart(Long productId, Long userId) {
-        CartEntity cart = findOrCreateCartForUser(userId);
-
-        // Buscar el producto en el carrito
-        PurchasedProductXCartEntity productInCart = findProductInCart(cart, productId);
-        if (productInCart == null) {
-            throw new NotFoundException("Producto no encontrado en el carrito");
-        }
-
-        // Eliminar el producto del carrito
-        cart.getPurchasedProducts().remove(productInCart);
-
-        // Sumar el stock del producto eliminado
-        updateStockForRemoval(productId, productInCart.getPurchasedProduct().getQuantity());
-
-        // Guardar los cambios en el carrito
-        cartRepository.save(cart);
-    }
-
-    private void updateStockForRemoval(Long productId, Long quantity) {
-        StockEntity stock = stockRepository.findByProductId(productId);
-        if (stock == null) {
-            throw new NotFoundException("Producto no encontrado en el inventario");
-        }
-        stock.setQuantity(stock.getQuantity() + quantity);
-        stockRepository.save(stock);
-    }
-
-    private CartEntity findOrCreateCartForUser(Long userId) {
-        return cartRepository.findByUserIdAndStatus(userId, CartStatus.PENDING)
-                .orElseGet(() -> createNewCart(userRepository.findById(userId)
-                        .orElseThrow(() -> new NotFoundException("Usuario no encontrado"))));
-    }
-
-    private CartEntity createNewCart(UserEntity user) {
-        CartEntity cart = new CartEntity();
-        cart.setUser(user);  // Asocia el carrito al usuario
-        cart.setStatus(CartStatus.PENDING);
-        cart.setPurchasedProducts(new ArrayList<>());
-        cart.setTotal(BigDecimal.ZERO);
+        cart.setTotal(cart.getTotal().add(subTotal));
         return cartRepository.save(cart);
     }
 
-    private void updateStock(Long productId, Long quantity) {
-        StockEntity stock = stockRepository.findByProductId(productId);
-        if (stock == null) {
-            throw new NotFoundException("Producto no encontrado en el inventario");
-        }
-        if (stock.getQuantity() < quantity) {
-            throw new InsufficientStockException("No hay suficiente stock disponible");
-        }
-        stock.setQuantity(stock.getQuantity() - quantity);
-        stockRepository.save(stock);
+    // Método para eliminar un producto del carrito
+    public CartEntity removeProductFromCart(Long cartId, Long cartProductId) {
+        CartEntity cart = cartRepository.findById(cartId)
+                .orElseThrow(() -> new RuntimeException("Carrito no encontrado"));
+
+        CartProductEntity cartProduct = cartProductRepository.findById(cartProductId)
+                .orElseThrow(() -> new RuntimeException("Producto en carrito no encontrado"));
+
+        restoreStock(cartProduct.getProduct(), cartProduct.getQuantity());
+
+        cart.setTotal(cart.getTotal().subtract(cartProduct.getSubTotal()));
+        cartProductRepository.delete(cartProduct);
+
+        return cartRepository.save(cart);
     }
 
-    private void addOrUpdateProductInCart(CartEntity cart, Long productId, Long quantity) {
-        PurchasedProductXCartEntity existingProductInCart = findProductInCart(cart, productId);
+    // Método para finalizar el carrito
+    public CartEntity finalizeCart(Long cartId) {
+        CartEntity cart = cartRepository.findById(cartId)
+                .orElseThrow(() -> new RuntimeException("Carrito no encontrado"));
 
-        if (existingProductInCart != null) {
-            updateProductQuantity(existingProductInCart, quantity);
-        } else {
-            addNewProductToCart(cart, productId, quantity);
-        }
-    }
-
-    private PurchasedProductXCartEntity findProductInCart(CartEntity cart, Long productId) {
-        return cart.getPurchasedProducts().stream()
-                .filter(p -> p.getPurchasedProduct().getId().equals(productId))
-                .findFirst()
-                .orElse(null);
-    }
-
-    private void updateProductQuantity(PurchasedProductXCartEntity purchasedProductXCart, Long quantity) {
-        PurchasedProductEntity purchasedProduct = purchasedProductXCart.getPurchasedProduct();
-        purchasedProduct.setQuantity(purchasedProduct.getQuantity() + quantity);
-        purchasedProduct.setSubTotal(purchasedProduct.getUnitPrice().multiply(BigDecimal.valueOf(purchasedProduct.getQuantity())));
-    }
-
-    private void addNewProductToCart(CartEntity cart, Long productId, Long quantity) {
-        StockEntity stock = stockRepository.findByProductId(productId);
-        if (stock == null) {
-            throw new NotFoundException("Producto no encontrado en el inventario");
+        if (cart.getStatus() != CartStatus.PENDING) {
+            throw new RuntimeException("Solo los carritos pendientes se pueden finalizar");
         }
 
-        PurchasedProductEntity purchasedProduct = new PurchasedProductEntity();
-        purchasedProduct.setId(productId);
-        purchasedProduct.setQuantity(quantity);
-        purchasedProduct.setUnitPrice(stock.getProduct().getPrice());
-        purchasedProduct.setSubTotal(purchasedProduct.getUnitPrice().multiply(BigDecimal.valueOf(quantity)));
+        cart.setStatus(CartStatus.COMPLETED);
+        return cartRepository.save(cart);
+    }
 
-        PurchasedProductXCartEntity purchasedProductXCart = new PurchasedProductXCartEntity();
-        purchasedProductXCart.setCart(cart);
-        purchasedProductXCart.setPurchasedProduct(purchasedProduct);
+    // Método para cancelar el carrito
+    public CartEntity cancelCart(Long cartId) {
+        CartEntity cart = cartRepository.findById(cartId)
+                .orElseThrow(() -> new RuntimeException("Carrito no encontrado"));
 
-        cart.getPurchasedProducts().add(purchasedProductXCart);
+        if (cart.getStatus() != CartStatus.PENDING) {
+            throw new RuntimeException("Solo los carritos pendientes se pueden cancelar");
+        }
+
+        for (CartProductEntity cartProduct : cart.getCartProducts()) {
+            restoreStock(cartProduct.getProduct(), cartProduct.getQuantity());
+        }
+
+        cart.setStatus(CartStatus.CANCELLED);
+        return cartRepository.save(cart);
+    }
+
+    private void checkAndDecreaseStock(ProductEntity product, Long quantity) {
+        if (product.getStock().getQuantity() < quantity) {
+            throw new RuntimeException("Stock insuficiente para el producto: " + product.getName());
+        }
+        product.getStock().setQuantity(product.getStock().getQuantity() - quantity);
+        productRepository.save(product);
+    }
+
+    private void restoreStock(ProductEntity product, Long quantity) {
+        product.getStock().setQuantity(product.getStock().getQuantity() + quantity);
+        productRepository.save(product);
     }
 }
-

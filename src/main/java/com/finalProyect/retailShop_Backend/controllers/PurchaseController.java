@@ -2,7 +2,6 @@ package com.finalProyect.retailShop_Backend.controllers;
 
 import com.finalProyect.retailShop_Backend.DTO.MessageResponse;
 import com.finalProyect.retailShop_Backend.DTO.PurchaseRequestDto;
-import com.finalProyect.retailShop_Backend.services.CartService;
 import com.finalProyect.retailShop_Backend.services.PurchaseService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
@@ -38,8 +37,6 @@ public class PurchaseController {
         // Lógica para finalizar el carrito
     }
 
-
-
     @Operation(summary = "Compra de producto",
             description = "Agrega o actualiza la cantidad de un producto en el carrito.")
     @ApiResponses(value = {
@@ -53,7 +50,7 @@ public class PurchaseController {
     })
     @PostMapping("/addProduct")
     public ResponseEntity<MessageResponse> addOrUpdateProductInCart(@RequestBody PurchaseRequestDto purchaseRequestDto) {
-        purchaseService.addOrUpdateProductInCart(purchaseRequestDto.getProductId(),
+        purchaseService.addProductToCart(purchaseRequestDto.getProductId(),
                 purchaseRequestDto.getQuantity(),
                 purchaseRequestDto.getUserId());
         MessageResponse response = new MessageResponse(200, "Producto procesado en el carrito");
@@ -71,7 +68,7 @@ public class PurchaseController {
             @ApiResponse(responseCode = "503", description = "Servicio no disponible"),
             @ApiResponse(responseCode = "500", description = "Error interno")
     })
-    @DeleteMapping("/remove/{productId}")
+    @DeleteMapping("/remove/{productId}/{userId}")
     public ResponseEntity<MessageResponse> removeProductFromCart(@PathVariable Long productId, @PathVariable Long userId) {
         purchaseService.removeProductFromCart(productId, userId);
         MessageResponse response = new MessageResponse(200, "Producto eliminado del carrito");

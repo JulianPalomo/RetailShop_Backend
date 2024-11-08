@@ -1,6 +1,8 @@
 package com.finalProyect.retailShop_Backend.entities.products;
 
+import com.finalProyect.retailShop_Backend.entities.BrandEntity;
 import com.finalProyect.retailShop_Backend.entities.CategoryEntity;
+import com.finalProyect.retailShop_Backend.entities.StockEntity;
 import jakarta.persistence.*;
 import lombok.*;
 import lombok.experimental.SuperBuilder;
@@ -13,32 +15,28 @@ import java.math.BigDecimal;
 @NoArgsConstructor
 @AllArgsConstructor
 @SuperBuilder
-@Inheritance(strategy = InheritanceType.JOINED)
 public class ProductEntity {
 
-    // Constructor adicional si necesitas inicializar con SuperBuilder
-    public ProductEntity(Long id, String name, BigDecimal price, boolean isActive,CategoryEntity category ) {
-        this.id = id;
-        this.name = name;
-        this.price = price;
-        this. isActive = isActive;
-        this.category = category;
-    }
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+    private Long id;  // El ID es generado automáticamente
+
+    @Column(nullable = false, unique = true)
+    private String name;  // Nombre del producto
 
     @Column(nullable = false)
-    private String name;
-
-    @Column(nullable = false)
-    private BigDecimal price;
-
-    @Column(nullable = false)
-    private boolean isActive;
+    private BigDecimal price;  // Precio del producto
 
     @ManyToOne
     @JoinColumn(name = "category_id", nullable = false)
-    private CategoryEntity category;
+    private CategoryEntity category;  // Relación con la tabla de categorías
+
+    @OneToOne
+    @JoinColumn(name = "stock_id", nullable = false)
+    private StockEntity stock;  // Relación con la tabla de stock
+
+    @ManyToOne
+    @JoinColumn(name = "brand_id", nullable = false)
+    private BrandEntity brand;  // Relación con la tabla de marcas
 
 }

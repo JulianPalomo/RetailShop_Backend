@@ -1,50 +1,40 @@
 package com.finalProyect.retailShop_Backend.repositories;
 
-import com.finalProyect.retailShop_Backend.DTO.ProductWithDetailsDTO;
+import com.finalProyect.retailShop_Backend.DTO.ProductDto;
 import com.finalProyect.retailShop_Backend.entities.products.ProductEntity;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
+import java.util.Optional;
 
 @Repository
 public interface ProductRepository extends JpaRepository<ProductEntity, Long> {
 
-    //Query personalizada para filtrar por cualquiera de los parametros, si se pasan nulls no los tiene en cuenta
-    @Query("SELECT new com.tu.paquete.dto.ProductWithDetailsDTO(" +
+    List<ProductEntity> findAll();  // Método para obtener todos los productos
+
+    /* TODO no anda !!!!!!!!!!!!!
+    @Query("SELECT new com.tu.paquete.dto.ProductDto(" +
             "p.id, " +
             "p.name, " +
             "p.price, " +
             "p.isActive, " +
-            "p.category.name, " +
+            "c.name, " +
             "s.quantity, " +
             "b.name) " +
             "FROM ProductEntity p " +
-            "LEFT JOIN StockEntity s ON p.id = s.product.id " +
-            "LEFT JOIN ProductXBrandEntity pxbe ON p.id = pxbe.product.id " +
-            "LEFT JOIN BrandEntity b ON pxbe.brand.id = b.id " +
+            "LEFT JOIN p.stock s " +  // Usando la relación OneToOne correctamente
+            "LEFT JOIN p.brand b " +  // Usando la relación ManyToOne correctamente
+            "LEFT JOIN p.category c " +  // Usando la relación ManyToOne correctamente
             "WHERE (:id IS NULL OR p.id = :id) " +
-            "AND (:name IS NULL OR p.name LIKE %:name%) " +
-            "AND (:category IS NULL OR p.category.name LIKE %:category%) " +
-            "AND (:brandName IS NULL OR b.name LIKE %:brandName%)")
-    List<ProductWithDetailsDTO> filterProductsWithParams(Long id, String name, String category, String brandName);
-
-    @Query("SELECT new com.tu.paquete.dto.ProductWithDetailsDTO(" +
-            "p.id, " +
-            "p.name, " +
-            "p.price, " +
-            "p.isActive, " +
-            "p.category.name, " +        // Asegúrate de tener un campo 'name' en CategoryEntity
-            "s.quantity, " +             // Esto es de la tabla StockEntity
-            "b.name) " +                 // Nombre de la marca desde la relación ProductXBrandEntity
-            "FROM ProductEntity p " +
-            "LEFT JOIN StockEntity s ON p.id = s.product.id " +
-            "LEFT JOIN ProductXBrandEntity pxbe ON p.id = pxbe.product.id " +
-            "LEFT JOIN BrandEntity b ON pxbe.brand.id = b.id " +
-            "WHERE (:id IS NULL OR p.id = :id) " +
-            "AND (:name IS NULL OR p.name LIKE %:name%) " +
-            "AND (:category IS NULL OR p.category.name LIKE %:category%) " +
-            "AND (:brandName IS NULL OR b.name LIKE %:brandName%)")
-    List<ProductWithDetailsDTO> getAllProducts ();
+            "AND (:name IS NULL OR LOWER(p.name) LIKE LOWER(CONCAT('%', :name, '%'))) " +
+            "AND (:category IS NULL OR LOWER(c.name) LIKE LOWER(CONCAT('%', :category, '%'))) " +
+            "AND (:brandName IS NULL OR LOWER(b.name) LIKE LOWER(CONCAT('%', :brandName, '%'))) ")
+    List<ProductDto> getAllProducts(@Param("id") Long id,
+                                    @Param("name") String name,
+                                    @Param("category") String category,
+                                    @Param("brandName") String brandName);
+*/
 }

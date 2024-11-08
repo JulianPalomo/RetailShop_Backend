@@ -9,9 +9,9 @@ import lombok.NoArgsConstructor;
 
 @Entity
 @Table(name = "stock")
-@Data  // Genera automáticamente getters, setters, equals, hashcode y toString
-@NoArgsConstructor  // Genera un constructor sin argumentos
-@AllArgsConstructor  // Genera un constructor con todos los argumentos
+@Data
+@NoArgsConstructor
+@AllArgsConstructor
 @Builder
 public class StockEntity {
 
@@ -22,7 +22,7 @@ public class StockEntity {
     @Column(nullable = false)
     private Long quantity;
 
-    @OneToOne
-    @JoinColumn(name = "product_id", nullable = false)
-    private ProductEntity product;
+    @OneToOne(mappedBy = "stock")
+    private ProductEntity product;  // Relación inversa con Producto
+
 }

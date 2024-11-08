@@ -1,58 +1,62 @@
 package com.finalProyect.retailShop_Backend.controllers;
 
-import com.finalProyect.retailShop_Backend.DTO.ProductWithDetailsDTO;
+import com.finalProyect.retailShop_Backend.DTO.ProductDto;
 import com.finalProyect.retailShop_Backend.entities.products.ProductEntity;
 import com.finalProyect.retailShop_Backend.services.ProductService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
-import java.util.Optional;
+
 
 @RestController
-@RequestMapping("/api/products")
+@RequestMapping("/api/products") //BASE URL
 public class ProductController {
 
     @Autowired
     private ProductService productService;
 
-    @GetMapping //TODO cambiar el dato con el que trabaja (ProductWithDetailsDTO)
-    public List<ProductWithDetailsDTO> getAllProducts() {
-        return productService.getAllProducts();
-    }
-
-    @GetMapping("/{id}") //TODO cambiar el dato con el que trabaja (ProductWithDetailsDTO) o hacer peticiones para consultar todos los datos
-    public ResponseEntity<ProductEntity> getProductById(@PathVariable Long id) {
-        Optional<ProductEntity> product = productService.getProductById(id);
-        return product.map(ResponseEntity::ok).orElseGet(() -> ResponseEntity.notFound().build());
-    }
-
-    @GetMapping("/filter") //TODO cambiar el dato con el que trabaja (ProductWithDetailsDTO)
-    public List<ProductWithDetailsDTO> filterProducts(
+    // Obtener todos los productos con filtros opcionales, si no estan aclarados retorna todos los productos
+    @GetMapping
+    public ResponseEntity<List<ProductDto>> getAllProducts(
             @RequestParam(required = false) Long id,
             @RequestParam(required = false) String name,
             @RequestParam(required = false) String category,
-            @RequestParam(required = false) String brandName){
-        return productService.filterProductsWithParams(id, name, category,brandName);
+            @RequestParam(required = false) String brandName) {
+
+        List<ProductDto> products = productService.getAllProducts(id, name, category, brandName);
+
+        return ResponseEntity.ok(products);
     }
 
+    // Obtener un producto por ID
+    @GetMapping("/{id}")
+    public ResponseEntity<ProductDto> getProductById(@PathVariable Long id) {
+        ProductDto product = productService.getProductById(id);
+
+        return ResponseEntity.ok(product);
+    }
+
+    // Crear un nuevo producto
     @PostMapping
-    public ProductEntity createProduct(@RequestBody ProductEntity product) {
-        return productService.createProduct(product);
+    public ResponseEntity<ProductEntity> createProduct(@RequestBody ProductEntity product) {
+        ProductEntity createdProduct = productService.createProduct(product);
+
+        return ResponseEntity.status(HttpStatus.CREATED).body(createdProduct);
     }
 
+
+    // Actualizar un producto
     @PutMapping("/{id}")
-    public ResponseEntity<ProductEntity> updateProduct(@PathVariable Long id, @RequestBody ProductEntity product) {
-        ProductEntity updatedProduct = productService.updateProduct(id, product);
-        if (updatedProduct != null) {
-            return ResponseEntity.ok(updatedProduct);
-        } else {
-            return ResponseEntity.notFound().build();
-        }
+    public ResponseEntity<ProductEntity> updateProduct(@PathVariable Long id, @RequestBody ProductEntity productDetails) {
+
+        ProductEntity updatedProduct = productService.updateProduct(id, productDetails);
+        return ResponseEntity.ok(updatedProduct);
     }
 
-    @DeleteMapping("/{id}") //TODO cambia el valor de bdd a no activo
+    @DeleteMapping("/{id}") //TODO cambia el valor de bdd a no activo ?
     public ResponseEntity<Void> deleteProduct(@PathVariable Long id) {
         productService.deleteProduct(id);
         return ResponseEntity.noContent().build();

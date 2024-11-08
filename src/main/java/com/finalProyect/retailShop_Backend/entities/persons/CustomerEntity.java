@@ -1,6 +1,6 @@
 package com.finalProyect.retailShop_Backend.entities.persons;
 
-
+/*
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -9,7 +9,7 @@ import lombok.NoArgsConstructor;
 import lombok.experimental.SuperBuilder;
 
 @Entity
-@Table(name = "customers")
+@Table(name = "customers") //todo modificar todo sin la herencia
 @Data  // Genera automáticamente getters, setters, equals, hashcode y toString
 @NoArgsConstructor  // Genera un constructor sin argumentos
 @AllArgsConstructor  // Genera un constructor con todos los argumentos
@@ -23,3 +23,6 @@ public class CustomerEntity extends PersonEntity{
     private int idNumber;
 
 }
+
+
+ */

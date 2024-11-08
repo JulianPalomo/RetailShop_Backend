@@ -35,3 +35,4 @@ public abstract class PersonEntity {
     private String email;
 
 }
+
