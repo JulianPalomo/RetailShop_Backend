@@ -14,7 +14,7 @@ import java.util.List;
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-public class VentaDto {
+public class SaleDto {
     private Long id;
     private Long userId;  // ID del usuario que realiza la venta
     private List<CartProductEntity> products;  // Lista de productos en la venta
