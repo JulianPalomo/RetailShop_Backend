@@ -1,6 +1,5 @@
 package com.finalProyect.retailShop_Backend.services;
 
-import com.finalProyect.retailShop_Backend.DTO.CategoryDto;
 import com.finalProyect.retailShop_Backend.DTO.ProductDto;
 import com.finalProyect.retailShop_Backend.entities.BrandEntity;
 import com.finalProyect.retailShop_Backend.entities.CategoryEntity;

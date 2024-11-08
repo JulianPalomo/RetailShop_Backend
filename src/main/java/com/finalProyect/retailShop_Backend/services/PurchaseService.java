@@ -44,7 +44,7 @@ public class PurchaseService {
         cartProduct.setQuantity(quantity);
         cartProduct.setUnitPrice(unitPrice);
         cartProduct.setSubTotal(subTotal);
-
+//
         cartProductRepository.save(cartProduct);
 
         cart.setTotal(cart.getTotal().add(subTotal));

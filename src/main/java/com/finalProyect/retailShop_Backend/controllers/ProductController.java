@@ -31,7 +31,7 @@ public class ProductController {
         List<ProductDto> products = productService.getAllProducts(id, name, category, brandName);
 
         return ResponseEntity.ok(products);
-    }
+    }//
 
     // Obtener un producto por ID
     @GetMapping("/{id}")
