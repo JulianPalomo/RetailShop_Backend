@@ -8,6 +8,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Service
@@ -36,10 +37,21 @@ public class CategoryService {
         return categoryMapper.toDto(category);
     }
 
-    // Método para crear una nueva categoría
-    public CategoryDto createCategory(CategoryEntity category) {
-        CategoryEntity savedCategory = categoryRepository.save(category);
+    public CategoryDto createCategory(CategoryDto categoryDto) {
+        // Verificar si la categoría ya existe
+        Optional<CategoryEntity> existingCategory = categoryRepository.findByName(categoryDto.getName());
+        if (existingCategory.isPresent()) {
+            // Si ya existe, devolver el DTO de la categoría existente
+            return categoryMapper.toDto(existingCategory.get());
+        }
 
+        // Crear una nueva categoría a partir del DTO
+        CategoryEntity categoryEntity = categoryMapper.toEntity(categoryDto);
+
+        // Guardar la nueva categoría en la base de datos
+        CategoryEntity savedCategory = categoryRepository.save(categoryEntity);
+
+        // Convertir la categoría guardada a DTO y devolverla
         return categoryMapper.toDto(savedCategory);
     }
 

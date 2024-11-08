@@ -1,8 +1,10 @@
 package com.finalProyect.retailShop_Backend.controllers;
 
 import com.finalProyect.retailShop_Backend.DTO.ProductDto;
+import com.finalProyect.retailShop_Backend.entities.StockEntity;
 import com.finalProyect.retailShop_Backend.entities.products.ProductEntity;
 import com.finalProyect.retailShop_Backend.services.ProductService;
+import jdk.jfr.Category;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -29,7 +31,7 @@ public class ProductController {
         List<ProductDto> products = productService.getAllProducts(id, name, category, brandName);
 
         return ResponseEntity.ok(products);
-    }
+    }//
 
     // Obtener un producto por ID
     @GetMapping("/{id}")
@@ -39,20 +41,16 @@ public class ProductController {
         return ResponseEntity.ok(product);
     }
 
-    // Crear un nuevo producto
     @PostMapping
-    public ResponseEntity<ProductEntity> createProduct(@RequestBody ProductEntity product) {
-        ProductEntity createdProduct = productService.createProduct(product);
-
+    public ResponseEntity<ProductDto> createProduct(@RequestBody ProductDto productDto) {
+        // Lógica para crear el producto
+        ProductDto createdProduct = productService.createProduct(productDto);
         return ResponseEntity.status(HttpStatus.CREATED).body(createdProduct);
     }
 
-
-    // Actualizar un producto
     @PutMapping("/{id}")
-    public ResponseEntity<ProductEntity> updateProduct(@PathVariable Long id, @RequestBody ProductEntity productDetails) {
-
-        ProductEntity updatedProduct = productService.updateProduct(id, productDetails);
+    public ResponseEntity<ProductDto> updateProduct(@PathVariable Long id, @RequestBody ProductDto productDto) {
+        ProductDto updatedProduct = productService.updateProduct(id, productDto);
         return ResponseEntity.ok(updatedProduct);
     }
 

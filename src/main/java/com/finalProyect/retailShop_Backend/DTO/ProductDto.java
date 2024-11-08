@@ -14,7 +14,7 @@ public class ProductDto{
     private Long id;
     private String name;
     private BigDecimal price;
-    private boolean isActive;
+    private boolean isActive = true;
     private String categoryName;
     private Long stockQuantity;
     private String brandName;
