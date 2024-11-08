@@ -1,18 +1,20 @@
 package com.finalProyect.retailShop_Backend.services;
 
-import com.finalProyect.retailShop_Backend.entity.UserEntity;
+import com.finalProyect.retailShop_Backend.entities.persons.UserEntity;
 import com.finalProyect.retailShop_Backend.repositories.UserRepository;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
 import java.util.Optional;
-
+/*
 @Service
 public class UserService {
 
-    @Autowired
-    private UserRepository userRepository;
+    private final UserRepository userRepository;
+
+    public UserService(UserRepository userRepository){
+        this.userRepository = userRepository;
+    }
 
     public List<UserEntity> getAllUsers() {
         return userRepository.findAll();
@@ -47,3 +49,4 @@ public class UserService {
     }
 
 }
+*/

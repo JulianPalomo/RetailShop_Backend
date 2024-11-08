@@ -1,6 +1,6 @@
 package com.finalProyect.retailShop_Backend.controllers;
-
-import com.finalProyect.retailShop_Backend.entity.UserEntity;
+/*
+import com.finalProyect.retailShop_Backend.entities.persons.UserEntity;
 import com.finalProyect.retailShop_Backend.services.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -48,3 +48,5 @@ public class UserController {
         return ResponseEntity.noContent().build();
     }
 }
+
+ */
