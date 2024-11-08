@@ -28,7 +28,7 @@ public class CategoryController {
         CategoryDto categoryDto = categoryService.getCategoryById(id);
         return new ResponseEntity<>(categoryDto, HttpStatus.OK);
     }
-/*
+
 
     // Crear una nueva categoría
     @PostMapping
@@ -36,7 +36,7 @@ public class CategoryController {
         CategoryDto createdCategory = categoryService.createCategory(categoryDto);
         return new ResponseEntity<>(createdCategory, HttpStatus.CREATED);
     }
-
+/*
     // Actualizar una categoría existente
     @PutMapping("/{id}")
     public ResponseEntity<CategoryDto> updateCategory(@PathVariable Long id, @RequestBody CategoryDto categoryDto) {

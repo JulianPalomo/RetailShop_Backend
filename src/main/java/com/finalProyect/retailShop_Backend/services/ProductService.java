@@ -86,7 +86,7 @@ public class ProductService {
         return productMapper.toDto(product);
     }
 
-    public ProductDto updateProduct(Long id, ProductDto productDto) {
+    public ProductDto updateProduct(Long id, ProductDto productDto){
         // Buscar el producto en la base de datos
         ProductEntity product = productRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("Product not found"));
