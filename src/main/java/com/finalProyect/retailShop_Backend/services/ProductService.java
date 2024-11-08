@@ -86,15 +86,32 @@ public class ProductService {
         return productMapper.toDto(product);
     }
 
-    // Método para actualizar un producto
-    public ProductEntity updateProduct(Long id, ProductEntity productDetails) {
-        ProductEntity product = productRepository.findById(id).orElseThrow(() -> new RuntimeException("Product not found")); //TODO : agregar excepcion personalizada
-        product.setName(productDetails.getName());
-        product.setPrice(productDetails.getPrice());
-        // product.setIsActive(productDetails.isActive());
-        product.setCategory(productDetails.getCategory());
-        // Actualizar otros campos según sea necesario
-        return productRepository.save(product);
+    public ProductDto updateProduct(Long id, ProductDto productDto) {
+        // Buscar el producto en la base de datos
+        ProductEntity product = productRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("Product not found"));
+
+        // Buscar o crear la categoría
+        CategoryEntity category = categoryRepository.findByName(productDto.getCategoryName())
+                .orElseGet(() -> categoryRepository.save(new CategoryEntity(productDto.getCategoryName())));
+
+        // Buscar o crear la marca
+        BrandEntity brand = brandRepository.findByName(productDto.getBrandName())
+                .orElseGet(() -> brandRepository.save(new BrandEntity(productDto.getBrandName())));
+
+        // Actualizar el producto con los valores del DTO
+        product.setName(productDto.getName());
+        product.setPrice(productDto.getPrice());
+        product.setCategory(category);
+        product.setBrand(brand);
+        //product.setIsActive(productDto.isActive());
+        product.getStock().setQuantity(productDto.getStockQuantity());
+
+
+        ProductEntity updatedProduct = productRepository.save(product);
+
+        // Mapear la entidad actualizada a DTO y devolverla
+        return productMapper.toDto(updatedProduct);
     } //TODO agregar excepcion
 
     // Método para eliminar un producto
