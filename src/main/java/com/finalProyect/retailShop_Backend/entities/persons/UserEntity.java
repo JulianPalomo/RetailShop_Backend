@@ -12,6 +12,7 @@ import lombok.experimental.SuperBuilder;
 @SuperBuilder  // Facilita la creación de objetos con el patrón builder
 public class UserEntity extends PersonEntity {
 
+
     @Column(nullable = false)
     private String password;
 
