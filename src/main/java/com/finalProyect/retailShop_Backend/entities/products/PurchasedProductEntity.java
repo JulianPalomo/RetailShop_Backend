@@ -1,5 +1,6 @@
 package com.finalProyect.retailShop_Backend.entities.products;
 
+import com.finalProyect.retailShop_Backend.entities.CategoryEntity;
 import jakarta.persistence.*;
 import lombok.*;
 import lombok.experimental.SuperBuilder;
@@ -26,4 +27,6 @@ public class PurchasedProductEntity extends ProductEntity {
 
     @Column(nullable = false)
     private BigDecimal subTotal;
+
+
 }

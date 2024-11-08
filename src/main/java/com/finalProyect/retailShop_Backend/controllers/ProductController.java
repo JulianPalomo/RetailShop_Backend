@@ -22,7 +22,7 @@ public class ProductController {
         return productService.getAllProducts();
     }
 
-    @GetMapping("/{id}") //TODO cambiar el dato con el que trabaja (ProductWithDetailsDTO)
+    @GetMapping("/{id}") //TODO cambiar el dato con el que trabaja (ProductWithDetailsDTO) o hacer peticiones para consultar todos los datos
     public ResponseEntity<ProductEntity> getProductById(@PathVariable Long id) {
         Optional<ProductEntity> product = productService.getProductById(id);
         return product.map(ResponseEntity::ok).orElseGet(() -> ResponseEntity.notFound().build());

@@ -9,7 +9,7 @@ import org.springframework.stereotype.Repository;
 import java.util.List;
 
 @Repository
-public interface ProductRepository extends JpaRepository<ProductWithDetailsDTO, Long> {
+public interface ProductRepository extends JpaRepository<ProductEntity, Long> {
 
     //Query personalizada para filtrar por cualquiera de los parametros, si se pasan nulls no los tiene en cuenta
     @Query("SELECT new com.tu.paquete.dto.ProductWithDetailsDTO(" +
