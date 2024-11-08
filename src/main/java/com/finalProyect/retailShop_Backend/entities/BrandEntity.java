@@ -1,5 +1,6 @@
 package com.finalProyect.retailShop_Backend.entities;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.finalProyect.retailShop_Backend.entities.products.ProductEntity;
 import jakarta.persistence.*;
 import lombok.*;
@@ -23,6 +24,12 @@ public class BrandEntity {
 
     // Relación bidireccional: una marca tiene muchos productos
     @OneToMany(mappedBy = "brand")  // "brand" es el nombre del atributo en ProductEntity
+    @JsonIgnore
     private List<ProductEntity> products; //opcional, facilita consultas por marca
+
+    public BrandEntity(String name) {
+        this.name = name;
+    }
+
 
 }

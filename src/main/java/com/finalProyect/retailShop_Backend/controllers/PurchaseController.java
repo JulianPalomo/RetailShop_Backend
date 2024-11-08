@@ -32,6 +32,7 @@ public class PurchaseController {
             @ApiResponse(responseCode = "503", description = "Servicio no disponible"),
             @ApiResponse(responseCode = "500", description = "Error interno del servidor")
     })
+
     @PutMapping("/finalize/{cartId}")
     public void finalizeCart(@PathVariable Long cartId) {
         // Lógica para finalizar el carrito
@@ -68,6 +69,8 @@ public class PurchaseController {
             @ApiResponse(responseCode = "503", description = "Servicio no disponible"),
             @ApiResponse(responseCode = "500", description = "Error interno")
     })
+
+
     @DeleteMapping("/remove/{productId}/{userId}")
     public ResponseEntity<MessageResponse> removeProductFromCart(@PathVariable Long productId, @PathVariable Long userId) {
         purchaseService.removeProductFromCart(productId, userId);
