@@ -24,7 +24,6 @@ import java.util.List;
   }
   export interface cartProduct {
     sku: number;
-    cartId: number;
     description: string;
     quantity: number;
     unitPrice: number;
