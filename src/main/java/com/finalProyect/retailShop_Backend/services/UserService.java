@@ -1,12 +1,14 @@
 package com.finalProyect.retailShop_Backend.services;
 
+import com.finalProyect.retailShop_Backend.DTO.UserDto;
 import com.finalProyect.retailShop_Backend.entities.persons.UserEntity;
 import com.finalProyect.retailShop_Backend.repositories.UserRepository;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
 import java.util.Optional;
-/*
+import java.util.stream.Collectors;
+
 @Service
 public class UserService {
 
@@ -16,8 +18,10 @@ public class UserService {
         this.userRepository = userRepository;
     }
 
-    public List<UserEntity> getAllUsers() {
-        return userRepository.findAll();
+    public List<UserDto> getAllUsers() {
+        return userRepository.findAll().stream()
+                .map(user -> new UserDto(user.getId(), user.getName(), user.getEmail(), user.isAdmin()))
+                .collect(Collectors.toList());
     }
 
     public Optional<UserEntity> getUserById(Long id) {
@@ -35,11 +39,13 @@ public class UserService {
             user.setName(updatedUser.getName());
             user.setEmail(updatedUser.getEmail());
             user.setPassword(updatedUser.getPassword());
+            user.setAdmin(updatedUser.isAdmin()); // Agregar esta línea
             return userRepository.save(user);
         } else {
-            return null; // o lanzar una excepción
+            return null; // O lanzar una excepción
         }
     }
+
 
     public void deleteUser(Long id) {
         userRepository.deleteById(id);
@@ -49,4 +55,3 @@ public class UserService {
     }
 
 }
-*/

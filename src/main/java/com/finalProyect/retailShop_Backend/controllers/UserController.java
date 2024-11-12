@@ -1,5 +1,6 @@
 package com.finalProyect.retailShop_Backend.controllers;
-/*
+
+import com.finalProyect.retailShop_Backend.DTO.UserDto;
 import com.finalProyect.retailShop_Backend.entities.persons.UserEntity;
 import com.finalProyect.retailShop_Backend.services.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -17,7 +18,7 @@ public class UserController {
     private UserService userService;
 
     @GetMapping
-    public List<UserEntity> getAllUsers() {
+    public List<UserDto> getAllUsers() {
         return userService.getAllUsers();
     }
 
@@ -49,4 +50,4 @@ public class UserController {
     }
 }
 
- */
+
