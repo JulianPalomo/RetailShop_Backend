@@ -1,5 +1,6 @@
 package com.finalProyect.retailShop_Backend.DTO;
 
+import com.finalProyect.retailShop_Backend.entities.CategoryEntity;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -12,10 +13,10 @@ import java.math.BigDecimal;
 
 public class ProductDto{
 
-    private Long id;
-    private String name;
-    private BigDecimal price;
-    private String categoryName;
-    private Long stockQuantity;
+    private Long sku;
+    private String description;
+    private BigDecimal unitPrice;
+    private CategoryEntity category;
+    private Long stock;
 
 }

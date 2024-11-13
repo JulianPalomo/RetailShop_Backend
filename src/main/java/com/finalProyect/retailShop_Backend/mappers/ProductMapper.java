@@ -8,20 +8,20 @@ public class ProductMapper {
 
     public ProductDto toDto(ProductEntity product) {
         ProductDto dto = new ProductDto();
-        dto.setId(product.getId());
-        dto.setName(product.getName());
-        dto.setPrice(product.getPrice());
-        dto.setCategoryName(product.getCategory().getName());
-        dto.setStockQuantity(product.getStock());
+        dto.setSku(product.getId());
+        dto.setDescription(product.getName());
+        dto.setUnitPrice(product.getPrice());
+        dto.setCategory(product.getCategory());
+        dto.setStock(product.getStock());
         return dto;
     }
 
     public ProductEntity toEntity(ProductDto dto) {
         ProductEntity product = new ProductEntity();
-        product.setId(dto.getId());
-        product.setName(dto.getName());
-        product.setPrice(dto.getPrice());
-        // TODO: establecer las referencias a categoría y marca
+        product.setId(dto.getSku());
+        product.setName(dto.getDescription());
+        product.setPrice(dto.getUnitPrice());
+        product.setCategory(dto.getCategory());
         return product;
     }
 }

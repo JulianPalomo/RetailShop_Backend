@@ -41,12 +41,12 @@ public class ProductService {
     }
 
     public ProductDto createProduct(ProductDto productDto) {
-        CategoryEntity category = categoryRepository.findByName(productDto.getCategoryName())
-                .orElseGet(() -> categoryRepository.save(new CategoryEntity(productDto.getCategoryName())));
+        CategoryEntity category = categoryRepository.findByName(productDto.getCategory().getName())
+                .orElseGet(() -> categoryRepository.save(new CategoryEntity(productDto.getCategory().getName())));
 
         ProductEntity product = new ProductEntity();
-        product.setName(productDto.getName());
-        product.setPrice(productDto.getPrice());
+        product.setName(productDto.getDescription());
+        product.setPrice(productDto.getUnitPrice());
         product.setCategory(category);
         product.setStock(product.getStock());
 
@@ -60,13 +60,13 @@ public class ProductService {
         ProductEntity product = productRepository.findById(id)
                 .orElseThrow(() -> new ProductNotFoundException("Producto no encontrado con el ID: " + id));
 
-        CategoryEntity category = categoryRepository.findByName(productDto.getCategoryName())
-                .orElseGet(() -> categoryRepository.save(new CategoryEntity(productDto.getCategoryName())));
+        CategoryEntity category = categoryRepository.findByName(productDto.getCategory().getName())
+                .orElseGet(() -> categoryRepository.save(new CategoryEntity(productDto.getCategory().getName())));
 
-        product.setName(productDto.getName());
-        product.setPrice(productDto.getPrice());
+        product.setName(productDto.getDescription());
+        product.setPrice(productDto.getUnitPrice());
         product.setCategory(category);
-        product.setStock(productDto.getStockQuantity());
+        product.setStock(productDto.getStock());
 
         ProductEntity updatedProduct = productRepository.save(product);
 
@@ -90,8 +90,8 @@ public class ProductService {
                 .orElseThrow(() -> new ProductNotFoundException("Producto no encontrado con el ID: " + id));
 
         ProductDto productDto = productMapper.toDto(product);
-        productDto.setCategoryName(product.getCategory().getName());
-        productDto.setStockQuantity(product.getStock());
+        productDto.setCategory(product.getCategory());
+        productDto.setStock(product.getStock());
 
         return productDto;
     }
