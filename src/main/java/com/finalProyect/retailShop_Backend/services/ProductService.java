@@ -23,16 +23,16 @@ public class ProductService {
     private CategoryRepository categoryRepository;
 
     @Autowired
-    private ProductMapper productMapper; //no se si es totalmente necesario ya que la query devuelve la estructura correcta
+    private ProductMapper productMapper;
 
     public ProductService() {
     }
 
-    // Obtener todos los productos con filtros
     public List<ProductDto> getAllProducts(Long id, String name, String category) {
         List<ProductEntity> productEntities = productRepository.findAll();
 
         return productEntities.stream()
+                .filter(ProductEntity::getIsActive) // Filtra solo productos activos
                 .filter(product -> (id == null || product.getId().equals(id)))
                 .filter(product -> (name == null || product.getName().toLowerCase().contains(name.toLowerCase())))
                 .filter(product -> (category == null || product.getCategory().getName().toLowerCase().contains(category.toLowerCase())))
@@ -40,7 +40,6 @@ public class ProductService {
                 .collect(Collectors.toList());
     }
 
-    // Crear un nuevo producto
     public ProductDto createProduct(ProductDto productDto) {
         CategoryEntity category = categoryRepository.findByName(productDto.getCategoryName())
                 .orElseGet(() -> categoryRepository.save(new CategoryEntity(productDto.getCategoryName())));
@@ -56,7 +55,7 @@ public class ProductService {
         return productMapper.toDto(product);
     }
 
-    // Actualizar un producto
+
     public ProductDto updateProduct(Long id, ProductDto productDto) throws ProductNotFoundException {
         ProductEntity product = productRepository.findById(id)
                 .orElseThrow(() -> new ProductNotFoundException("Producto no encontrado con el ID: " + id));
@@ -74,18 +73,20 @@ public class ProductService {
         return productMapper.toDto(updatedProduct);
     }
 
-    // Eliminar un producto
+
     public boolean deleteProduct(Long id) throws ProductNotFoundException {
-        if (!productRepository.existsById(id)) {
-            throw new ProductNotFoundException("Producto no encontrado con el ID: " + id);
-        }
-        productRepository.deleteById(id);
+        ProductEntity product = productRepository.findById(id)
+                .orElseThrow(() -> new ProductNotFoundException("Producto no encontrado con el ID: " + id));
+
+        product.setIsActive(false);
+        productRepository.save(product);
         return true;
     }
 
-    // Obtener un producto por ID
+
     public ProductDto getProductById(Long id) throws ProductNotFoundException {
         ProductEntity product = productRepository.findById(id)
+                .filter(ProductEntity::getIsActive)
                 .orElseThrow(() -> new ProductNotFoundException("Producto no encontrado con el ID: " + id));
 
         ProductDto productDto = productMapper.toDto(product);

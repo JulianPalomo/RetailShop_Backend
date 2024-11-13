@@ -6,7 +6,6 @@ import lombok.*;
 import lombok.experimental.SuperBuilder;
 
 import java.math.BigDecimal;
-
 @Entity
 @Table(name = "products")
 @Data
@@ -28,8 +27,11 @@ public class ProductEntity {
     @Column(nullable = false)
     private Long stock;
 
+    @Column(nullable = false)
+    private Boolean isActive = true;
+
     @ManyToOne
     @JoinColumn(name = "category_id", nullable = false)
-    private CategoryEntity category;
+    private CategoryEntity category; 
 
 }
