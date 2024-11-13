@@ -33,12 +33,12 @@ public class CartService {
         ProductEntity product = productRepository.findById(productId)
                 .orElseThrow(() -> new RuntimeException("Product not found"));
 
-        if (product.getStock().getQuantity() < quantity) {
+        if (product.getStock() < quantity) {
             throw new RuntimeException("Insufficient stock for product: " + product.getName());
         }
 
         // Descontar stock temporalmente
-        product.getStock().setQuantity(product.getStock().getQuantity() - quantity);
+        product.setStock(product.getStock() - quantity);
         productRepository.save(product);
 
         // Calcular subtotal
@@ -70,7 +70,7 @@ public class CartService {
 
         // Restaurar stock del producto
         ProductEntity product = cartProduct.getProduct();
-        product.getStock().setQuantity(product.getStock().getQuantity() + cartProduct.getQuantity());
+        product.setStock(product.getStock()+ cartProduct.getQuantity());
         productRepository.save(product);
 
         // Restar el subtotal del producto del total del carrito
@@ -103,7 +103,7 @@ public class CartService {
         // Restaurar stock para cada producto en el carrito
         for (CartProductEntity cartProduct : cart.getCartProducts()) {
             ProductEntity product = cartProduct.getProduct();
-            product.getStock().setQuantity(product.getStock().getQuantity() + cartProduct.getQuantity());
+            product.setStock(product.getStock() + cartProduct.getQuantity());
             productRepository.save(product);
         }
 

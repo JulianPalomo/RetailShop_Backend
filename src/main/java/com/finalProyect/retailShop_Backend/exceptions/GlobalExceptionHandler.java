@@ -32,7 +32,7 @@ public class GlobalExceptionHandler {
 
     @ExceptionHandler(InsufficientStockException.class)
     public ResponseEntity<String> handleInsufficientStockException(InsufficientStockException ex) {
-        return new ResponseEntity<>(ex.getMessage(), HttpStatus.BAD_REQUEST); // o HttpStatus.CONFLICT dependiendo de tu lógica
+        return new ResponseEntity<>(ex.getMessage(), HttpStatus.BAD_REQUEST); //
     }
 
     @ExceptionHandler(ServiceDownException.class)
@@ -45,7 +45,6 @@ public class GlobalExceptionHandler {
         return new ResponseEntity<>(ex.getMessage(), HttpStatus.UNAUTHORIZED);
     }
 
-    // Captura cualquier otra excepción no manejada y devuelve un error interno
     @ExceptionHandler(Exception.class)
     public ResponseEntity<String> handleException(Exception ex) {
         return new ResponseEntity<>("Ocurrió un error inesperado: " + ex.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);

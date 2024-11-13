@@ -11,9 +11,8 @@ public class ProductMapper {
         dto.setId(product.getId());
         dto.setName(product.getName());
         dto.setPrice(product.getPrice());
-        dto.setCategoryName(product.getCategory().getName());  // Nombre de la categoría
-        dto.setBrandName(product.getBrand().getName());  // Nombre de la marca
-        dto.setStockQuantity(product.getStock().getQuantity());  // Stock disponible
+        dto.setCategoryName(product.getCategory().getName());
+        dto.setStockQuantity(product.getStock());
         return dto;
     }
 

@@ -59,7 +59,7 @@ public class PurchaseService {
         CartProductEntity cartProduct = cartProductRepository.findById(cartProductId)
                 .orElseThrow(() -> new RuntimeException("Producto en carrito no encontrado"));
 
-        restoreStock(cartProduct.getProduct(), cartProduct.getQuantity());
+        //restoreStock(cartProduct.getProduct(), cartProduct.getQuantity());
 
         cart.setTotal(cart.getTotal().subtract(cartProduct.getSubTotal()));
         cartProductRepository.delete(cartProduct);
@@ -90,7 +90,7 @@ public class PurchaseService {
         }
 
         for (CartProductEntity cartProduct : cart.getCartProducts()) {
-            restoreStock(cartProduct.getProduct(), cartProduct.getQuantity());
+            //restoreStock(cartProduct.getProduct(), cartProduct.getQuantity());
         }
 
         cart.setStatus(CartStatus.CANCELLED);
@@ -98,7 +98,7 @@ public class PurchaseService {
     }
 
     private void checkAndDecreaseStock(ProductEntity product, Long quantity) {
-        if (product.getStock().getQuantity() < quantity) {
+        /*if (product.getStock().getQuantity() < quantity) {
             throw new RuntimeException("Stock insuficiente para el producto: " + product.getName());
         }
         product.getStock().setQuantity(product.getStock().getQuantity() - quantity);
@@ -106,7 +106,7 @@ public class PurchaseService {
     }
 
     private void restoreStock(ProductEntity product, Long quantity) {
-        product.getStock().setQuantity(product.getStock().getQuantity() + quantity);
-        productRepository.save(product);
+        //product.getStock().setQuantity(product.getStock().getQuantity() + quantity);
+        productRepository.save(product);*/
     }
 }
