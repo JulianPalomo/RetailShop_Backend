@@ -14,6 +14,8 @@ import java.util.List;
 @RestController
 @RequestMapping("/sales")
 @RequiredArgsConstructor
+@CrossOrigin(origins = "http://localhost:4200") // Asegúrate de que la URL del frontend sea correcta
+
 public class SaleController {
 
     @Autowired

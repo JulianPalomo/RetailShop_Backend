@@ -19,6 +19,7 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/api/products")
+@CrossOrigin(origins = "http://localhost:4200") // Asegúrate de que la URL del frontend sea correcta
 
 public class ProductController {
 
@@ -35,11 +36,11 @@ public class ProductController {
             @ApiResponse(responseCode = "500", description = "Error interno del servidor")
     })
     public ResponseEntity<List<ProductDto>> getAllProducts(
-            @RequestParam(required = false) Long id,
-            @RequestParam(required = false) String name,
+            @RequestParam(required = false) Long sku,
+            @RequestParam(required = false) String description,
             @RequestParam(required = false) String category) {
 
-        List<ProductDto> products = productService.getAllProducts(id, name, category);
+        List<ProductDto> products = productService.getAllProducts(sku, description, category);
         if (products.isEmpty()) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
         }
@@ -72,6 +73,8 @@ public class ProductController {
             @ApiResponse(responseCode = "500", description = "Error interno del servidor")
     })
     public ResponseEntity<ProductDto> createProduct(@RequestBody ProductDto productDto) {
+        System.out.println(productDto); // Revisa si el objeto llega con valores válidos
+
         ProductDto createdProduct = productService.createProduct(productDto);
         return ResponseEntity.status(HttpStatus.CREATED).body(createdProduct);
     }

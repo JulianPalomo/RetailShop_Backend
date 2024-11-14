@@ -14,6 +14,7 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/api/categories")
+@CrossOrigin(origins = "http://localhost:4200") // Asegúrate de que la URL del frontend sea correcta
 public class CategoryController {
 
     @Autowired
