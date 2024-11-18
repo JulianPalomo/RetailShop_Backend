@@ -113,3 +113,6 @@ INSERT INTO stock (quantity) VALUES (140);
 INSERT INTO products (name, price, category_id, stock_id, brand_id) VALUES
 ('Filtro de combustible', 90.00, 1, 21, 5);
 
+
+INSERT INTO users (name, email, password, is_admin) VALUES ('Admin User', 'admin@example.com', 'adminpassword', true);
+INSERT INTO users (name, email, password, is_admin) VALUES ('Regular User', 'user@example.com', 'userpassword', false);

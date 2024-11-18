@@ -18,7 +18,9 @@ public class UserService {
 
     public UserService(UserRepository userRepository, UserMapper userMapper) {
         this.userRepository = userRepository;
-        this.userMapper = userMapper;
+        this.userMapper = userMapper;{
+
+        }
     }
 
     public List<UserDto> getAllUsers() {
@@ -57,8 +59,17 @@ public class UserService {
         userRepository.deleteById(id);
     }
 
-    private String encryptPassword(String password) {
-        // Método para encriptar la contraseña
-        return password; // reemplazar con la lógica de encriptación
+
+    public UserEntity authenticate(String email, String password) {
+        UserEntity user = userRepository.findByEmail(email);
+        if (user != null && user.getPassword().equals(password)) {
+            return user;
+        }
+        return null;
     }
+
+
+
+
+
 }
