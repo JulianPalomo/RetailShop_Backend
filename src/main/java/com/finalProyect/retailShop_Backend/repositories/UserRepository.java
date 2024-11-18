@@ -10,5 +10,5 @@ import java.util.List;
 public interface UserRepository extends JpaRepository<UserEntity, Long> {
     List<UserEntity> findByName(String name);
 
-    UserEntity findByEmail(String email);
+    UserEntity findByDni(String dni);
 }

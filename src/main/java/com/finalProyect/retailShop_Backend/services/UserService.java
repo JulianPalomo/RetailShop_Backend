@@ -46,6 +46,7 @@ public class UserService {
         if (userOptional.isPresent()) {
             UserEntity user = userOptional.get();
             user.setName(updatedUserDTO.getName());
+            user.setDni(updatedUserDTO.getDni());
             user.setEmail(updatedUserDTO.getEmail());
             user.setAdmin(updatedUserDTO.isAdmin());
             UserEntity updatedUser = userRepository.save(user);
@@ -60,8 +61,8 @@ public class UserService {
     }
 
 
-    public UserDto authenticate(String email, String password) {
-        UserEntity user = userRepository.findByEmail(email);
+    public UserDto authenticate(String dni, String password) {
+        UserEntity user = userRepository.findByDni(dni);
         if (user != null && user.getPassword().equals(password)) {
             return userMapper.toDTO(user);
         }

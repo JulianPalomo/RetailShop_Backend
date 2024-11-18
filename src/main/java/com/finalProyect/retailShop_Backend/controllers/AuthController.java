@@ -1,8 +1,8 @@
 package com.finalProyect.retailShop_Backend.controllers;
 
+import com.finalProyect.retailShop_Backend.DTO.LoginRequestDto;
 import com.finalProyect.retailShop_Backend.DTO.UserDto;
 import com.finalProyect.retailShop_Backend.services.UserService;
-import com.finalProyect.retailShop_Backend.entities.persons.UserEntity;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -15,8 +15,8 @@ public class AuthController {
     private UserService userService;
 
     @PostMapping("/login")
-    public ResponseEntity<?> login(@RequestBody LoginRequest loginRequest) {
-        UserDto userDto = userService.authenticate(loginRequest.getEmail(), loginRequest.getPassword());
+    public ResponseEntity<?> login(@RequestBody LoginRequestDto loginRequest) {
+        UserDto userDto = userService.authenticate(loginRequest.getDni(), loginRequest.getPassword());
         if (userDto != null) {
             return ResponseEntity.ok(userDto);
         } else {

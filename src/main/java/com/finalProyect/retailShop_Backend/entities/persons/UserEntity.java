@@ -16,6 +16,9 @@ public class UserEntity extends PersonEntity {
     @Column(nullable = false)
     private String password;
 
+    @Column(unique = true,nullable = false)
+    private String dni;
+
     @Column(nullable = false)
     private boolean isAdmin;
 

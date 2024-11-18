@@ -13,6 +13,7 @@ public class UserMapper {
         return new UserDto(
                 userEntity.getId(),
                 userEntity.getName(),
+                userEntity.getDni(),
                 userEntity.getEmail(),
                 userEntity.getPassword(),
                 userEntity.isAdmin()
@@ -24,6 +25,7 @@ public class UserMapper {
         return UserEntity.builder()
                 .id(userDTO.getId())
                 .name(userDTO.getName())
+                .dni(userDTO.getDni())
                 .email(userDTO.getEmail())
                 .password(userDTO.getPassword())
                 .isAdmin(userDTO.isAdmin())
