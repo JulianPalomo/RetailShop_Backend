@@ -60,10 +60,10 @@ public class UserService {
     }
 
 
-    public UserEntity authenticate(String email, String password) {
+    public UserDto authenticate(String email, String password) {
         UserEntity user = userRepository.findByEmail(email);
         if (user != null && user.getPassword().equals(password)) {
-            return user;
+            return userMapper.toDTO(user);
         }
         return null;
     }
