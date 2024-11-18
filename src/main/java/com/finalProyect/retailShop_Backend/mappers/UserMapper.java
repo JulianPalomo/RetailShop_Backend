@@ -14,6 +14,7 @@ public class UserMapper {
                 userEntity.getId(),
                 userEntity.getName(),
                 userEntity.getEmail(),
+                userEntity.getPassword(),
                 userEntity.isAdmin()
         );
     }
@@ -24,6 +25,7 @@ public class UserMapper {
                 .id(userDTO.getId())
                 .name(userDTO.getName())
                 .email(userDTO.getEmail())
+                .password(userDTO.getPassword())
                 .isAdmin(userDTO.isAdmin())
                 // Nota: No se establece password aquí por seguridad
                 .build();

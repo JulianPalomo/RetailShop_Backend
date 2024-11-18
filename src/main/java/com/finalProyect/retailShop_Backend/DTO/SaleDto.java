@@ -22,4 +22,7 @@ public class SaleDto {
     private BigDecimal total;  // Total de la venta
     private LocalDate date;  // Fecha de la venta
     private String paymentMethod;  // Método de pago
+
+    public <R> SaleDto(Long id, Long id1, R collect, BigDecimal total, LocalDate date, String paymentMethod) {
+    }
 }

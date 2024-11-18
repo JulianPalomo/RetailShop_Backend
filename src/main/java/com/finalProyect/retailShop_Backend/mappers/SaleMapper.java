@@ -1,7 +1,9 @@
 package com.finalProyect.retailShop_Backend.mappers;
 
+import com.finalProyect.retailShop_Backend.DTO.CartProductDto;
 import com.finalProyect.retailShop_Backend.DTO.SaleDto;
 import com.finalProyect.retailShop_Backend.entities.SaleEntity;
+import com.finalProyect.retailShop_Backend.entities.persons.UserEntity;
 import com.finalProyect.retailShop_Backend.entities.products.CartProductEntity;
 ///import com.finalProyect.retailShop_Backend.services.UserService;
 import lombok.RequiredArgsConstructor;
@@ -14,13 +16,11 @@ import java.util.stream.Collectors;
 @RequiredArgsConstructor
 public class SaleMapper {
 
-    ///private final UserService userService; // Para obtener UserEntity a partir de userId
-
     // Método para convertir de SaleDto a SaleEntity
-    public SaleEntity toEntity(SaleDto saleDto) {
+    public SaleEntity toEntity(SaleDto saleDto, UserEntity user, List<CartProductEntity> cartProducts) {
         return SaleEntity.builder()
-               /// .user(userService.getUserById(saleDto.getUserId())) // Obtiene UserEntity por ID
-                .products(saleDto.getProducts()) // Usamos los productos directamente (asegúrate de que estén mapeados)
+                .user(user) // Asigna el UserEntity
+                .products(cartProducts) // Asigna los productos del carrito
                 .total(saleDto.getTotal())
                 .date(saleDto.getDate())
                 .paymentMethod(saleDto.getPaymentMethod())
@@ -32,10 +32,20 @@ public class SaleMapper {
         return new SaleDto(
                 saleEntity.getId(),
                 saleEntity.getUser().getId(),
-                saleEntity.getProducts(),
+                saleEntity.getProducts().stream()
+                        .map(product -> new CartProductDto(
+                                product.getId(),
+                                product.getProduct().getName(), // Accede a la descripción desde ProductEntity
+                                product.getQuantity().intValue(),
+                                product.getUnitPrice(),
+                                product.getSubTotal()
+                        ))
+                        .collect(Collectors.toList()),
                 saleEntity.getTotal(),
                 saleEntity.getDate(),
                 saleEntity.getPaymentMethod()
         );
     }
 }
+
+    

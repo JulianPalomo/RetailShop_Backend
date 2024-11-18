@@ -34,4 +34,6 @@ public class CartProductEntity {
 
     @Column(nullable = false)
     private BigDecimal subTotal;  // Subtotal (unitPrice * quantity)
+
+
 }
