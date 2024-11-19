@@ -25,4 +25,6 @@ public class StockEntity {
     @OneToOne(mappedBy = "stock")
     private ProductEntity product;  // Relación inversa con Producto
 
+    @Column(nullable = false)
+    private int MinimunStock;
 }

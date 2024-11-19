@@ -71,6 +71,7 @@ public class ProductService {
 
         StockEntity stock = new StockEntity();
         stock.setQuantity(productDto.getStockQuantity());
+        stock.setMinimunStock(productDto.getMinimunStock());
         stock = stockRepository.save(stock);
 
         ProductEntity product = new ProductEntity();
@@ -79,6 +80,7 @@ public class ProductService {
         product.setCategory(category);
         product.setBrand(brand);
         product.setStock(stock);
+        product.setIsActive(productDto.isIsActive());
 
 
         product = productRepository.save(product);
@@ -104,8 +106,9 @@ public class ProductService {
         product.setPrice(productDto.getPrice());
         product.setCategory(category);
         product.setBrand(brand);
-        //product.setIsActive(productDto.isActive());
+        product.setIsActive(productDto.isIsActive());
         product.getStock().setQuantity(productDto.getStockQuantity());
+        product.getStock().setMinimunStock(productDto.getMinimunStock());  // Actualizar el mínimo stock
 
 
         ProductEntity updatedProduct = productRepository.save(product);
@@ -134,7 +137,8 @@ public class ProductService {
         productDto.setCategoryName(product.getCategory().getName());
         productDto.setStockQuantity(product.getStock().getQuantity());
         productDto.setBrandName(product.getBrand().getName());
-
+        productDto.setMinimunStock(product.getStock().getMinimunStock());
+        productDto.setIsActive(product.isIsActive());
         return productDto;
     }
 

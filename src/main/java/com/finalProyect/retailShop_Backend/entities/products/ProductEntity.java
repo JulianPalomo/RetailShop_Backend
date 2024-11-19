@@ -39,4 +39,7 @@ public class ProductEntity {
     @JoinColumn(name = "brand_id", nullable = false)
     private BrandEntity brand;  // Relación con la tabla de marcas
 
+    @Column(nullable = false)
+    private boolean IsActive;  // Indica si el producto está activo o no
+
 }
