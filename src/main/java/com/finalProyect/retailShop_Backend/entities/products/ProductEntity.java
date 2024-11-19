@@ -24,6 +24,9 @@ public class ProductEntity {
     @Column(nullable = false, unique = true)
     private String name;  // Nombre del producto
 
+    @Column(nullable = false, unique = true)
+    private String sku;
+
     @Column(nullable = false)
     private BigDecimal price;  // Precio del producto
 

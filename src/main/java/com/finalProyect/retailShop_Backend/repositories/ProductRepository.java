@@ -15,6 +15,7 @@ public interface ProductRepository extends JpaRepository<ProductEntity, Long> {
 
     List<ProductEntity> findAll();  // Método para obtener todos los productos
 
+
     /* TODO no anda !!!!!!!!!!!!!
     @Query("SELECT new com.tu.paquete.dto.ProductDto(" +
             "p.id, " +

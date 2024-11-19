@@ -81,6 +81,7 @@ public class ProductService {
         product.setBrand(brand);
         product.setStock(stock);
         product.setIsActive(productDto.isIsActive());
+        product.setSku(productDto.getSku());
 
 
         product = productRepository.save(product);
