@@ -1,115 +1,41 @@
--- Marcas
-INSERT INTO brands (name) VALUES ('Bosch');
-INSERT INTO brands (name) VALUES ('Ford');
-INSERT INTO brands (name) VALUES ('Michelin');
-INSERT INTO brands (name) VALUES ('Genirico');
-INSERT INTO brands (name) VALUES ('ACDelco');
+-- Insertar categorías
+INSERT INTO categories (name) VALUES
+('Frenos'),
+('Suspensión'),
+('Motor'),
+('Transmisión'),
+('Escape'),
+('Eléctrico'),
+('Accesorios'),
+('Carrocería'),
+('Refrigeración'),
+('Dirección');
 
--- Categorías
-INSERT INTO categories (name) VALUES ('Filtros');
-INSERT INTO categories (name) VALUES ('Baterías');
-INSERT INTO categories (name) VALUES ('Llantas');
-INSERT INTO categories (name) VALUES ('Frenos');
-INSERT INTO categories (name) VALUES ('Aceites');
-INSERT INTO categories (name) VALUES ('Luces');
-INSERT INTO categories (name) VALUES ('Escape');
-INSERT INTO categories (name) VALUES ('Suspensión');
-INSERT INTO categories (name) VALUES ('Encendido');
-INSERT INTO categories (name) VALUES ('Correas');
+-- Insertar productos
+INSERT INTO products (sku, name, price, stock, minimum_stock, is_active, category_id) VALUES
+('BRAKE01', 'Pastillas de Freno Delanteras', 45.99, 100, 10, TRUE, 1),
+('BRAKE02', 'Discos de Freno Traseros', 120.00, 50, 5, TRUE, 1),
+('SUSP01', 'Amortiguadores Delanteros', 89.50, 30, 5, TRUE, 2),
+('SUSP02', 'Resortes de Suspensión', 55.75, 20, 3, TRUE, 2),
+('ENGINE01', 'Filtro de Aceite', 12.99, 200, 20, TRUE, 3),
+('ENGINE02', 'Bomba de Agua', 75.00, 40, 5, TRUE, 3),
+('TRANS01', 'Kit de Embrague', 230.00, 15, 2, TRUE, 4),
+('TRANS02', 'Aceite de Transmisión', 18.50, 60, 10, TRUE, 4),
+('EXHAUST01', 'Silenciador', 150.00, 10, 2, TRUE, 5),
+('ELEC01', 'Batería de 12V', 95.00, 25, 5, TRUE, 6),
+('ACCESS01', 'Tapetes de Goma', 25.00, 100, 10, TRUE, 7),
+('BODY01', 'Espejo Retrovisor Derecho', 45.00, 20, 2, TRUE, 8),
+('COOLING01', 'Radiador', 120.00, 10, 2, TRUE, 9),
+('STEERING01', 'Caja de Dirección', 320.00, 5, 1, TRUE, 10);
 
--- Productos
--- Filtros
-INSERT INTO stock (quantity) VALUES (150);
-INSERT INTO products (name, price, category_id, stock_id, brand_id) VALUES
-('Filtro de aceite', 120.00, 1, 1, 1);
+-- Insertar usuarios de ejemplo
+INSERT INTO users (password, dni, name, email, is_admin) VALUES
+('password123', '12345678', 'Juan Pérez', 'juan.perez@example.com', FALSE),
+('adminpass', '87654321', 'Admin User', 'admin@example.com', TRUE),
+('userpass', '45678912', 'Ana Gómez', 'ana.gomez@example.com', FALSE);
 
-INSERT INTO stock (quantity) VALUES (120);
-INSERT INTO products (name, price, category_id, stock_id, brand_id) VALUES
-('Filtro de aire', 80.00, 1, 2, 2);
-
--- Baterías
-INSERT INTO stock (quantity) VALUES (90);
-INSERT INTO products (name, price, category_id, stock_id, brand_id) VALUES
-('Batería 12V', 850.00, 2, 3, 2);
-
-INSERT INTO stock (quantity) VALUES (70);
-INSERT INTO products (name, price, category_id, stock_id, brand_id) VALUES
-('Batería 24V', 1100.00, 2, 4, 1);
-
--- Llantas
-INSERT INTO stock (quantity) VALUES (60);
-INSERT INTO products (name, price, category_id, stock_id, brand_id) VALUES
-('Llanta 15"', 350.00, 3, 5, 3);
-
-INSERT INTO stock (quantity) VALUES (80);
-INSERT INTO products (name, price, category_id, stock_id, brand_id) VALUES
-('Llanta 16"', 400.00, 3, 6, 4);
-
--- Frenos
-INSERT INTO stock (quantity) VALUES (200);
-INSERT INTO products (name, price, category_id, stock_id, brand_id) VALUES
-('Pastillas de freno', 95.00, 4, 7, 1);
-
-INSERT INTO stock (quantity) VALUES (150);
-INSERT INTO products (name, price, category_id, stock_id, brand_id) VALUES
-('Disco de freno', 180.00, 4, 8, 5);
-
--- Aceites
-INSERT INTO stock (quantity) VALUES (300);
-INSERT INTO products (name, price, category_id, stock_id, brand_id) VALUES
-('Aceite sintético', 60.00, 5, 9, 1);
-
-INSERT INTO stock (quantity) VALUES (250);
-INSERT INTO products (name, price, category_id, stock_id, brand_id) VALUES
-('Aceite semi-sintético', 55.00, 5, 10, 2);
-
--- Luces
-INSERT INTO stock (quantity) VALUES (500);
-INSERT INTO products (name, price, category_id, stock_id, brand_id) VALUES
-('Luz halógena', 35.00, 6, 11, 2);
-
-INSERT INTO stock (quantity) VALUES (450);
-INSERT INTO products (name, price, category_id, stock_id, brand_id) VALUES
-('Luz LED', 45.00, 6, 12, 1);
-
--- Escape
-INSERT INTO stock (quantity) VALUES (60);
-INSERT INTO products (name, price, category_id, stock_id, brand_id) VALUES
-('Sistema de escape deportivo', 600.00, 7, 13, 4);
-
-INSERT INTO stock (quantity) VALUES (80);
-INSERT INTO products (name, price, category_id, stock_id, brand_id) VALUES
-('Silenciador', 450.00, 7, 14, 1);
-
--- Suspensión
-INSERT INTO stock (quantity) VALUES (100);
-INSERT INTO products (name, price, category_id, stock_id, brand_id) VALUES
-('Amortiguador delantero', 300.00, 8, 15, 5);
-
-INSERT INTO stock (quantity) VALUES (90);
-INSERT INTO products (name, price, category_id, stock_id, brand_id) VALUES
-('Amortiguador trasero', 280.00, 8, 16, 2);
-
--- Encendido
-INSERT INTO stock (quantity) VALUES (150);
-INSERT INTO products (name, price, category_id, stock_id, brand_id) VALUES
-('Bujía de encendido', 20.00, 9, 17, 2);
-
-INSERT INTO stock (quantity) VALUES (200);
-INSERT INTO products (name, price, category_id, stock_id, brand_id) VALUES
-('Bobina de encendido', 120.00, 9, 18, 1);
-
--- Correas
-INSERT INTO stock (quantity) VALUES (300);
-INSERT INTO products (name, price, category_id, stock_id, brand_id) VALUES
-('Correa de distribución', 75.00, 10, 19, 1);
-
-INSERT INTO stock (quantity) VALUES (250);
-INSERT INTO products (name, price, category_id, stock_id, brand_id) VALUES
-('Correa de alternador', 65.00, 10, 20, 2);
-
--- Ejemplo adicional (producto #21)
-INSERT INTO stock (quantity) VALUES (140);
-INSERT INTO products (name, price, category_id, stock_id, brand_id) VALUES
-('Filtro de combustible', 90.00, 1, 21, 5);
-
+-- Insertar tarjetas de ejemplo
+INSERT INTO cards (card_number, card_expiry, card_cvv) VALUES
+('1234567890123456', '12/25', '123'),
+('6543210987654321', '06/24', '456'),
+('1111222233334444', '09/26', '789');

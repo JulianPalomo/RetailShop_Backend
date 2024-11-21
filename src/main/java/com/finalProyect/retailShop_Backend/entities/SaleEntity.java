@@ -10,6 +10,7 @@ import lombok.NoArgsConstructor;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
+import java.util.ArrayList;
 import java.util.List;
 
 @Entity
@@ -31,8 +32,8 @@ public class SaleEntity {
     @Column(nullable = true)
     private Long clientId;
 
-    @OneToMany(mappedBy = "sale", cascade = CascadeType.ALL)
-    private List<CartProductEntity> products;
+    @OneToMany(mappedBy = "sale", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<CartProductEntity> products = new ArrayList<>();
 
     @Column(nullable = false)
     private BigDecimal total;

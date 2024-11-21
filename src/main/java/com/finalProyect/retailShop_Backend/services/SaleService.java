@@ -37,45 +37,45 @@ public class SaleService {
 
     @Transactional
     public SaleDto confirmarVenta(SaleDto saleDto) {
-        // 1. Obtener el usuario basado en saleDto.getEmployeedId()
+        // 1. Obtener el usuario (empleado) basado en el ID
         UserEntity user = userRepository.findById(saleDto.getEmployeedId())
                 .orElseThrow(() -> new RuntimeException("Empleado no encontrado"));
 
-        // 2. Obtener y validar cada producto del DTO
+        // 2. Validar y mapear productos desde el DTO
         List<CartProductEntity> cartProductEntities = saleDto.getProducts().stream()
                 .map(productDto -> {
-                    // Buscar el ProductEntity asociado al SKU
                     ProductEntity productEntity = productRepository.findById(productDto.getId())
-                            .orElseThrow(() -> new RuntimeException("Producto no encontrado con ID: " + productDto.getSku()));
+                            .orElseThrow(() -> new RuntimeException("Producto no encontrado con ID: " + productDto.getId()));
 
-                    // Crear una nueva instancia de CartProductEntity
-                    CartProductEntity cartProductEntity = new CartProductEntity();
-                    cartProductEntity.setProduct(productEntity);
-                    cartProductEntity.setQuantity(productDto.getQuantity());
-                    cartProductEntity.setUnitPrice(productDto.getUnitPrice());
-                    cartProductEntity.setSubTotal(productDto.getSubTotal());
-                    return cartProductEntity;
-                })
-                .collect(Collectors.toList());
+                    // Crear instancia de CartProductEntity
+                    return CartProductEntity.builder()
+                            .product(productEntity)
+                            .quantity(productDto.getQuantity())
+                            .unitPrice(productDto.getUnitPrice())
+                            .subTotal(productDto.getSubTotal())
+                            .build();
+                }).collect(Collectors.toList());
 
         // 3. Crear y persistir la venta
-        SaleEntity saleEntity = new SaleEntity();
-        saleEntity.setUser(user);
-        saleEntity.setProducts(cartProductEntities); // Relación con los productos
-        saleEntity.setTotal(saleDto.getTotal());
-        saleEntity.setDate(LocalDate.now()); // Fecha actual
-        saleEntity.setPaymentMethod(saleDto.getPaymentMethod());
+        SaleEntity saleEntity = SaleEntity.builder()
+                .user(user)
+                .clientId(saleDto.getClientId())
+                .total(saleDto.getTotal())
+                .date(LocalDate.now())
+                .paymentMethod(saleDto.getPaymentMethod())
+                .build();
 
-        // Guardar la venta en la base de datos
+        // Asociar los productos a la venta (sincronización bidireccional)
+        cartProductEntities.forEach(cartProductEntity -> cartProductEntity.setSale(saleEntity));
+        saleEntity.setProducts(cartProductEntities);
+
+        // Guardar la venta y productos asociados
         SaleEntity savedSale = saleRepository.save(saleEntity);
 
-        // 4. Asociar la venta a cada producto y guardar los productos
-        cartProductEntities.forEach(cartProductEntity -> cartProductEntity.setSale(savedSale));
-        cartProductRepository.saveAll(cartProductEntities);
-
-        // 5. Retornar la venta guardada como DTO
+        // 4. Retornar como DTO
         return saleMapper.toDto(savedSale);
     }
+
 
     public List<SaleDto> obtenerTodasLasVentas() {
         return saleRepository.findAll().stream()
