@@ -29,6 +29,7 @@ public class UserMapper {
                 .email(userDTO.getEmail())
                 .password(userDTO.getPassword())
                 .isAdmin(userDTO.isAdmin())
+                .isActive(true)
                 .build();
     }
 }

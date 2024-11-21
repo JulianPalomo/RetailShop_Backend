@@ -39,6 +39,7 @@ public class UserService {
 
     public UserDto createUser(UserDto userDTO) {
         UserEntity userEntity = userMapper.toEntity(userDTO);
+        userEntity.setActive(true);
         ///userEntity.setPassword(encryptPassword(userDTO.getPassword())); // Encripta la contraseña
         UserEntity savedUser = userRepository.save(userEntity);
         return userMapper.toDTO(savedUser);
