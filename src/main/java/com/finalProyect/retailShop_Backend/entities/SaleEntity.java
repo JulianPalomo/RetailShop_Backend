@@ -29,7 +29,7 @@ public class SaleEntity {
     @JoinColumn(name = "user_id", nullable = false)
     private UserEntity user;
 
-    @Column(nullable = true)
+    @Column(nullable = false)
     private Long clientId;
 
     @OneToMany(mappedBy = "sale", cascade = CascadeType.ALL, orphanRemoval = true)

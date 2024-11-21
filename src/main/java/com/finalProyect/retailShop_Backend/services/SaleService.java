@@ -77,8 +77,18 @@ public class SaleService {
     }
 
 
-    public List<SaleDto> obtenerTodasLasVentas() {
-        return saleRepository.findAll().stream()
+    public List<SaleDto> obtenerVentas(Optional<Long> clientId) {
+        List<SaleEntity> ventas;
+
+        if (clientId.isPresent()) {
+            // Si clientId está presente, filtramos por ese valor
+            ventas = saleRepository.findByClientId(clientId.get());
+        } else {
+            // Si no hay filtro, traemos todas las ventas
+            ventas = saleRepository.findAll();
+        }
+
+        return ventas.stream()
                 .map(saleMapper::toDto)
                 .collect(Collectors.toList());
     }

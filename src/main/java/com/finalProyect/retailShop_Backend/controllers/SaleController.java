@@ -2,6 +2,8 @@ package com.finalProyect.retailShop_Backend.controllers;
 
 
 import com.finalProyect.retailShop_Backend.DTO.SaleDto;
+import com.finalProyect.retailShop_Backend.mappers.SaleMapper;
+import com.finalProyect.retailShop_Backend.repositories.SaleRepository;
 import com.finalProyect.retailShop_Backend.services.SaleService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -10,6 +12,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.Optional;
+
 @RestController
 @RequestMapping("/api/sales")
 @RequiredArgsConstructor
@@ -18,6 +22,12 @@ public class SaleController {
 
     @Autowired
     private final SaleService saleService;
+
+    @Autowired
+    private SaleRepository saleRepository;
+
+    @Autowired
+    private SaleMapper saleMapper;
 
     @PostMapping("/confirm")
     public ResponseEntity<SaleDto> confirmarVenta(@RequestBody SaleDto saleDto) {
@@ -28,6 +38,7 @@ public class SaleController {
             return (ResponseEntity<SaleDto>) ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
+    /*
 
     @GetMapping
     public ResponseEntity<?> obtenerVentas() {
@@ -41,7 +52,18 @@ public class SaleController {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
                     .body("Error al obtener las ventas: " + e.getMessage());
         }
-    }
+    }*/
+
+   @GetMapping
+   public ResponseEntity<?> obtenerVentas(@RequestParam(required = false) Optional<Long> clientId)
+   {
+       List<SaleDto> ventas = saleService.obtenerVentas(clientId);
+
+       if (ventas.isEmpty()) {
+           return new ResponseEntity<>("No se encontraron ventas", HttpStatus.NOT_FOUND);
+       }
+       return new ResponseEntity<>(ventas, HttpStatus.OK);
+   }
 
     @GetMapping("/{id}")
     public ResponseEntity<?> obtenerVentaPorId(@PathVariable Long id) {
