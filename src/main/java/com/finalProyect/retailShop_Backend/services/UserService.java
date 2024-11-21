@@ -2,6 +2,8 @@ package com.finalProyect.retailShop_Backend.services;
 
 import com.finalProyect.retailShop_Backend.DTO.UserDto;
 import com.finalProyect.retailShop_Backend.entities.persons.UserEntity;
+import com.finalProyect.retailShop_Backend.exceptions.NotFoundException;
+import com.finalProyect.retailShop_Backend.exceptions.ProductNotFoundException;
 import com.finalProyect.retailShop_Backend.mappers.UserMapper;
 import com.finalProyect.retailShop_Backend.repositories.UserRepository;
 import org.springframework.stereotype.Service;
@@ -49,15 +51,25 @@ public class UserService {
             user.setDni(updatedUserDTO.getDni());
             user.setEmail(updatedUserDTO.getEmail());
             user.setAdmin(updatedUserDTO.isAdmin());
+            user.setPassword(updatedUserDTO.getPassword());
             UserEntity updatedUser = userRepository.save(user);
             return userMapper.toDTO(updatedUser);
         } else {
-            return null; // o lanzar una excepción si prefieres manejar errores
+            new NotFoundException("User no encontrado" );// o lanzar una excepción si prefieres manejar errores
         }
+        return updatedUserDTO;
     }
 
     public void deleteUser(Long id) {
-        userRepository.deleteById(id);
+        Optional<UserEntity> userEntityOptional = userRepository.findById(id);
+        if(userEntityOptional.isPresent())
+        {
+            UserEntity userEntity = userEntityOptional.get();
+            userEntity.setActive(false);
+
+        }else {
+            throw new RuntimeException("Usuario no encontrado");
+        }
     }
 
 

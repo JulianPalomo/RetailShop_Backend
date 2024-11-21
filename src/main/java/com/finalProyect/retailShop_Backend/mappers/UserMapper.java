@@ -23,13 +23,11 @@ public class UserMapper {
     // Convierte de UserDTO a UserEntity
     public UserEntity toEntity(UserDto userDTO) {
         return UserEntity.builder()
-                .id(userDTO.getId())
                 .name(userDTO.getName())
                 .dni(userDTO.getDni())
                 .email(userDTO.getEmail())
                 .password(userDTO.getPassword())
                 .isAdmin(userDTO.isAdmin())
-                // Nota: No se establece password aquí por seguridad
                 .build();
     }
 }

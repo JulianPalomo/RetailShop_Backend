@@ -30,4 +30,7 @@ public class UserEntity{
     @Column(nullable = false)
     private boolean isAdmin;
 
+    @Column(nullable = false)
+    private boolean isActive = true;
+
 }
