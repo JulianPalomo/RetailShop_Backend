@@ -27,6 +27,7 @@ public class UserService {
 
     public List<UserDto> getAllUsers() {
         return userRepository.findAll().stream()
+                .filter(UserEntity::isActive)
                 .map(userMapper::toDTO)
                 .collect(Collectors.toList());
     }
@@ -55,7 +56,7 @@ public class UserService {
             UserEntity updatedUser = userRepository.save(user);
             return userMapper.toDTO(updatedUser);
         } else {
-            new NotFoundException("User no encontrado" );// o lanzar una excepción si prefieres manejar errores
+            new NotFoundException("User no encontrado" );
         }
         return updatedUserDTO;
     }
@@ -80,9 +81,6 @@ public class UserService {
         }
         return null;
     }
-
-
-
 
 
 }

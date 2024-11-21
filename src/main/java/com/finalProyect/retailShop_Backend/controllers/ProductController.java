@@ -36,7 +36,7 @@ public class ProductController {
             @ApiResponse(responseCode = "500", description = "Error interno del servidor")
     })
     public ResponseEntity<List<ProductDto>> getAllProducts(
-            @RequestParam(required = false) Long sku,
+            @RequestParam(required = false) String sku,
             @RequestParam(required = false) String description,
             @RequestParam(required = false) String category) {
 

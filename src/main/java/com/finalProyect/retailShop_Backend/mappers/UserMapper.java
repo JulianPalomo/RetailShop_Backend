@@ -16,7 +16,8 @@ public class UserMapper {
                 userEntity.getDni(),
                 userEntity.getEmail(),
                 userEntity.getPassword(),
-                userEntity.isAdmin()
+                userEntity.isAdmin(),
+                userEntity.isActive()
         );
     }
 

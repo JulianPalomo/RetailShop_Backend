@@ -27,12 +27,12 @@ public class ProductService {
     public ProductService() {
     }
 
-    public List<ProductDto> getAllProducts(Long id, String name, String category) {
+    public List<ProductDto> getAllProducts(String sku, String name, String category) {
         List<ProductEntity> productEntities = productRepository.findAll();
 
         return productEntities.stream()
                 .filter(ProductEntity::getIsActive) // Filtra solo productos activos
-                .filter(product -> (id == null || product.getId().equals(id)))
+                .filter(product -> (sku == null || product.getSku().equals(sku)))
                 .filter(product -> (name == null || product.getName().toLowerCase().contains(name.toLowerCase())))
                 .filter(product -> (category == null || product.getCategory().getName().toLowerCase().contains(category.toLowerCase())))
                 .map(productMapper::toDto)
@@ -48,6 +48,7 @@ public class ProductService {
         product.setPrice(productDto.getUnitPrice());
         product.setCategory(category);
         product.setStock(productDto.getStock());
+        product.setSku(productDto.getSku());
 
         product = productRepository.save(product);
 
@@ -63,9 +64,11 @@ public class ProductService {
                 .orElseGet(() -> categoryRepository.save(new CategoryEntity(productDto.getCategory().getName())));
 
         product.setName(productDto.getDescription());
+        product.setSku(productDto.getSku());
         product.setPrice(productDto.getUnitPrice());
         product.setCategory(category);
         product.setStock(productDto.getStock());
+        product.setMinimumStock(productDto.getMinimumStock());
 
         ProductEntity updatedProduct = productRepository.save(product);
 
