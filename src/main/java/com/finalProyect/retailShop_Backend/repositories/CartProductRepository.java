@@ -11,8 +11,8 @@ import java.util.Optional;
 public interface CartProductRepository extends JpaRepository<CartProductEntity, Long> {
 
     // Método para obtener todos los productos de un carrito específico
-    List<CartProductEntity> findByCartId(Long cartId);
+    List<CartProductEntity> findBySaleId(Long cartId);
 
     // Método para obtener un producto específico en un carrito por ID de carrito e ID de producto
-    Optional<CartProductEntity> findByCartIdAndProductId(Long cartId, Long productId);
+    Optional<CartProductEntity> findBySaleIdAndProductId(Long cartId, Long productId);
 }
