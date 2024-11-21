@@ -94,4 +94,8 @@ public class ProductService {
 
         return productDto;
     }
+
+    public boolean existsBySku(String sku) {
+        return productRepository.existsBySku(sku);
+    }
 }

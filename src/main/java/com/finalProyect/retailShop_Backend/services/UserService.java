@@ -1,48 +1,76 @@
 package com.finalProyect.retailShop_Backend.services;
 
+import com.finalProyect.retailShop_Backend.DTO.UserDto;
 import com.finalProyect.retailShop_Backend.entities.persons.UserEntity;
+import com.finalProyect.retailShop_Backend.mappers.UserMapper;
 import com.finalProyect.retailShop_Backend.repositories.UserRepository;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
 import java.util.Optional;
-/*
+import java.util.stream.Collectors;
+
 @Service
 public class UserService {
 
     private final UserRepository userRepository;
+    private final UserMapper userMapper;
 
-    public UserService(UserRepository userRepository){
+    public UserService(UserRepository userRepository, UserMapper userMapper) {
         this.userRepository = userRepository;
+        this.userMapper = userMapper;{
+
+        }
     }
 
-    public List<UserEntity> getAllUsers() {
-        return userRepository.findAll();
+    public List<UserDto> getAllUsers() {
+        return userRepository.findAll().stream()
+                .map(userMapper::toDTO)
+                .collect(Collectors.toList());
     }
 
-    public Optional<UserEntity> getUserById(Long id) {
-        return userRepository.findById(id);
+    public UserDto getUserById(Long id) {
+        Optional<UserEntity> user = userRepository.findById(id);
+        return user.map(userMapper::toDTO).orElse(null);
     }
 
-    public UserEntity createUser(UserEntity user) {
-        return userRepository.save(user);
+    public UserDto createUser(UserDto userDTO) {
+        UserEntity userEntity = userMapper.toEntity(userDTO);
+        ///userEntity.setPassword(encryptPassword(userDTO.getPassword())); // Encripta la contraseña
+        UserEntity savedUser = userRepository.save(userEntity);
+        return userMapper.toDTO(savedUser);
     }
 
-    public UserEntity updateUser(Long id, UserEntity updatedUser) {
+    public UserDto updateUser(Long id, UserDto updatedUserDTO) {
         Optional<UserEntity> userOptional = userRepository.findById(id);
         if (userOptional.isPresent()) {
             UserEntity user = userOptional.get();
-            user.setName(updatedUser.getName());
-            user.setEmail(updatedUser.getEmail());
-            user.setPassword(updatedUser.getPassword());
-            return userRepository.save(user);
+            user.setName(updatedUserDTO.getName());
+            user.setDni(updatedUserDTO.getDni());
+            user.setEmail(updatedUserDTO.getEmail());
+            user.setAdmin(updatedUserDTO.isAdmin());
+            UserEntity updatedUser = userRepository.save(user);
+            return userMapper.toDTO(updatedUser);
         } else {
-            return null; // o lanzar una excepción
+            return null; // o lanzar una excepción si prefieres manejar errores
         }
     }
 
     public void deleteUser(Long id) {
         userRepository.deleteById(id);
     }
+
+
+    public UserDto authenticate(String dni, String password) {
+        UserEntity user = userRepository.findByDni(dni);
+        if (user != null && user.getPassword().equals(password)) {
+            return userMapper.toDTO(user);
+        }
+        return null;
+    }
+
+
+
+
+
 }
-*/

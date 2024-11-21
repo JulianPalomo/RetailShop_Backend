@@ -113,4 +113,11 @@ public class ProductController {
         return ResponseEntity.noContent().build();
     }
 
+    @GetMapping("/exists/{sku}")
+    public ResponseEntity<Boolean> existsBySku(@PathVariable String sku) {
+        boolean exists = productService.existsBySku(sku);
+        return ResponseEntity.ok(exists);
+    }
+
+
 }

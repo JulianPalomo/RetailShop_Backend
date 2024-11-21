@@ -10,4 +10,7 @@ import java.util.List;
 public interface ProductRepository extends JpaRepository<ProductEntity, Long> {
 
     List<ProductEntity> findAll();  // Método para obtener todos los productos
+
+    boolean existsBySku(String sku);
+
 }
