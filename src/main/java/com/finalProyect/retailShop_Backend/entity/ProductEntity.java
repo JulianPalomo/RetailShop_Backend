@@ -2,6 +2,8 @@ package com.finalProyect.retailShop_Backend.entity;
 
 import jakarta.persistence.*;
 import lombok.*;
+import lombok.experimental.SuperBuilder;
+
 import java.math.BigDecimal;
 
 @Entity
@@ -9,7 +11,8 @@ import java.math.BigDecimal;
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-@Builder
+@SuperBuilder
+@Inheritance(strategy = InheritanceType.JOINED)
 public class ProductEntity {
 
     @Id
@@ -22,10 +25,16 @@ public class ProductEntity {
     @Column(nullable = false)
     private BigDecimal price;
 
+    @Column()
+    private String description;
+
     @Column(nullable = false)
-    private int stock;
+    private boolean isActive;
 
     @ManyToOne
-    @JoinColumn(name = "category_id", nullable = false)  // Referencia a la categoría
-    private CategoryEntity category;  // Cada producto tiene una única categoría
+    @JoinColumn(name = "category_id", nullable = false)
+    private CategoryEntity category;
+
+    @OneToOne(mappedBy = "product", cascade = CascadeType.ALL, orphanRemoval = true)
+    private StockEntity stock;
 }
