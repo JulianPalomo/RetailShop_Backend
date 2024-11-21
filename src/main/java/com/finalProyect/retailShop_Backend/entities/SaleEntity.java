@@ -28,6 +28,9 @@ public class SaleEntity {
     @JoinColumn(name = "user_id", nullable = false)
     private UserEntity user;
 
+    @Column(nullable = true)
+    private Long clientId;
+
     @OneToMany(mappedBy = "sale", cascade = CascadeType.ALL)
     private List<CartProductEntity> products;
 

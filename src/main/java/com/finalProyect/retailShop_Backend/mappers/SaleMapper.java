@@ -35,6 +35,7 @@ public class SaleMapper {
         SaleEntity sale = new SaleEntity();
         sale.setId(dto.getId());
         sale.setUser(user);
+        sale.setClientId(dto.getClientId());
         sale.setProducts(cartProducts);
         sale.setTotal(dto.getTotal());
         sale.setDate(dto.getDate());
