@@ -1,6 +1,6 @@
 package com.finalProyect.retailShop_Backend.mappers;
 import com.finalProyect.retailShop_Backend.DTO.ProductDto;
-import com.finalProyect.retailShop_Backend.entities.products.ProductEntity;
+import com.finalProyect.retailShop_Backend.entities.ProductEntity;
 import org.springframework.stereotype.Component;
 
 @Component
@@ -9,20 +9,25 @@ public class ProductMapper {
     public ProductDto toDto(ProductEntity product) {
         ProductDto dto = new ProductDto();
         dto.setId(product.getId());
-        dto.setName(product.getName());
-        dto.setPrice(product.getPrice());
-        dto.setCategoryName(product.getCategory().getName());  // Nombre de la categoría
-        dto.setBrandName(product.getBrand().getName());  // Nombre de la marca
-        dto.setStockQuantity(product.getStock().getQuantity());  // Stock disponible
+        dto.setSku(product.getSku());
+        dto.setDescription(product.getName());
+        dto.setUnitPrice(product.getPrice());
+        dto.setMinimumStock(product.getMinimumStock());
+        dto.setCategory(product.getCategory());
+        dto.setStock(product.getStock());
         return dto;
     }
 
     public ProductEntity toEntity(ProductDto dto) {
         ProductEntity product = new ProductEntity();
         product.setId(dto.getId());
-        product.setName(dto.getName());
-        product.setPrice(dto.getPrice());
-        // TODO: establecer las referencias a categoría y marca
+        product.setSku(dto.getSku());
+        product.setName(dto.getDescription());
+        product.setPrice(dto.getUnitPrice());
+        product.setStock(dto.getStock());
+        product.setMinimumStock(dto.getMinimumStock());
+        product.setCategory(dto.getCategory());
         return product;
     }
+
 }
