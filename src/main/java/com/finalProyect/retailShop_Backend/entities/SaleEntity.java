@@ -39,7 +39,7 @@ public class SaleEntity {
     private BigDecimal total;
 
     @Column(nullable = false)
-    private LocalDate date;
+    private String date;
 
     @Column(nullable = false)
     private String paymentMethod;

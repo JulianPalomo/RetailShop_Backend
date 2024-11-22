@@ -15,10 +15,10 @@ import java.util.List;
 public class SaleDto {
 
     private Long id;
-    private Long employeedId;
+    private Long employeeId;
     private Long clientId; //dni de comprador
     private List<CartProductDto> products;
     private BigDecimal total;
-    private LocalDate date;
+    private String date;
     private String paymentMethod;
 }

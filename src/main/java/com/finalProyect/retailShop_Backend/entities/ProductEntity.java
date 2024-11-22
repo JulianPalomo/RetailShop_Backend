@@ -30,7 +30,7 @@ public class ProductEntity {
     @Column(nullable = false)
     private Long stock;
 
-    @Column(nullable = false)
+    @Column(nullable = true)
     private Long minimumStock;
 
     @Column(nullable = false)

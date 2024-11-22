@@ -38,7 +38,7 @@ public class SaleService {
     @Transactional
     public SaleDto confirmarVenta(SaleDto saleDto) {
         // 1. Obtener el usuario (empleado) basado en el ID
-        UserEntity user = userRepository.findById(saleDto.getEmployeedId())
+        UserEntity user = userRepository.findById(saleDto.getEmployeeId())
                 .orElseThrow(() -> new RuntimeException("Empleado no encontrado"));
 
         // 2. Validar y mapear productos desde el DTO
@@ -61,7 +61,7 @@ public class SaleService {
                 .user(user)
                 .clientId(saleDto.getClientId())
                 .total(saleDto.getTotal())
-                .date(LocalDate.now())
+                .date(LocalDate.now().toString())
                 .paymentMethod(saleDto.getPaymentMethod())
                 .build();
 

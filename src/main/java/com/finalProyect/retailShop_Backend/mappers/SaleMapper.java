@@ -21,7 +21,7 @@ public class SaleMapper {
     public SaleDto toDto(SaleEntity sale) {
         SaleDto dto = new SaleDto();
         dto.setId(sale.getId());
-        dto.setEmployeedId(sale.getUser().getId());
+        dto.setEmployeeId(sale.getUser().getId());
         dto.setClientId(sale.getClientId());
         dto.setProducts(sale.getProducts().stream()
                 .map(cartProductMapper::toDto)
