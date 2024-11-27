@@ -77,24 +77,33 @@ public class SaleService {
     }
 
 
-    public List<SaleDto> obtenerVentas(Optional<Long> clientId) {
+    public List<SaleDto> obtenerVentas() {
         List<SaleEntity> ventas;
 
-        if (clientId.isPresent()) {
-            // Si clientId está presente, filtramos por ese valor
-            ventas = saleRepository.findByClientId(clientId.get());
-        } else {
+//        if (clientId.isPresent()) {
+//            // Si clientId está presente, filtramos por ese valor
+//            ventas = saleRepository.findByClientId(clientId.get());
+//        } else {
             // Si no hay filtro, traemos todas las ventas
             ventas = saleRepository.findAll();
-        }
+//        }
 
         return ventas.stream()
                 .map(saleMapper::toDto)
                 .collect(Collectors.toList());
     }
 
-    public SaleDto obtenerVentaPorId(Long id) {
+    public List<SaleDto> obtenerVentaPorId(Long id) {
+        List<SaleEntity> venta = saleRepository.findByClientId(id);
+        return venta.stream().map(saleMapper::toDto).collect(Collectors.toList());
+    }
+
+    public SaleDto obtenerVentaPorIdVenta(Long id) {
         Optional<SaleEntity> venta = saleRepository.findById(id);
-        return venta.map(saleMapper::toDto).orElse(null);
+
+        return saleMapper.toDto(
+                venta.get()
+        )
+        ;
     }
 }

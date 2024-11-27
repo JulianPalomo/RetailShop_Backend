@@ -9,4 +9,5 @@ public interface SaleRepository extends JpaRepository<SaleEntity, Long> {
 
     List<SaleEntity> findByClientId(Long clientId);
 
+
 }

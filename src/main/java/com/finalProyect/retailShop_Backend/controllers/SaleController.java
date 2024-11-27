@@ -5,6 +5,7 @@ import com.finalProyect.retailShop_Backend.DTO.SaleDto;
 import com.finalProyect.retailShop_Backend.mappers.SaleMapper;
 import com.finalProyect.retailShop_Backend.repositories.SaleRepository;
 import com.finalProyect.retailShop_Backend.services.SaleService;
+import io.swagger.models.Response;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -55,9 +56,11 @@ public class SaleController {
     }*/
 
    @GetMapping
-   public ResponseEntity<?> obtenerVentas(@RequestParam(required = false) Optional<Long> clientId)
+   public ResponseEntity<?> obtenerVentas(
+//           @RequestParam(required = false) Optional<Long> id
+   )
    {
-       List<SaleDto> ventas = saleService.obtenerVentas(clientId);
+       List<SaleDto> ventas = saleService.obtenerVentas();
 
        if (ventas.isEmpty()) {
            return new ResponseEntity<>("No se encontraron ventas", HttpStatus.NOT_FOUND);
@@ -65,10 +68,12 @@ public class SaleController {
        return new ResponseEntity<>(ventas, HttpStatus.OK);
    }
 
+
+
     @GetMapping("/{id}")
     public ResponseEntity<?> obtenerVentaPorId(@PathVariable Long id) {
         try {
-            SaleDto venta = saleService.obtenerVentaPorId(id);
+            List<SaleDto> venta = saleService.obtenerVentaPorId(id);
             if (venta == null) {
                 return ResponseEntity.status(HttpStatus.NOT_FOUND)
                         .body("Venta no encontrada con el ID: " + id);
@@ -79,4 +84,19 @@ public class SaleController {
                     .body("Error al obtener la venta: " + e.getMessage());
         }
     }
+
+    @GetMapping("/venta/{id}")
+    public ResponseEntity<?> getById(@PathVariable Long id)
+    {
+        SaleDto sale = saleService.obtenerVentaPorIdVenta(id);
+
+        if( sale != null){
+            return ResponseEntity.ok(sale);
+        }
+        else {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND)
+                    .body("Venta no encontrada");
+        }
+    }
+
 }
