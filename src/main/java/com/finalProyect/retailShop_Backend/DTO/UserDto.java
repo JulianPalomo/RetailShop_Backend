@@ -1,5 +1,6 @@
 package com.finalProyect.retailShop_Backend.DTO;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -14,6 +15,7 @@ public class UserDto {
     private String dni;
     private String email;
     private String password;
+    @JsonProperty("isAdmin") // Forzamos el nombre del campo en el JSON
     private boolean isAdmin;
     private boolean isActive;
 }
