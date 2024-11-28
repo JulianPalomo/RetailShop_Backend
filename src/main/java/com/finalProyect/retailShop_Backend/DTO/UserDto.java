@@ -17,5 +17,6 @@ public class UserDto {
     private String password;
     @JsonProperty("isAdmin") // Forzamos el nombre del campo en el JSON
     private boolean isAdmin;
+    @JsonProperty("isActive")
     private boolean isActive;
 }

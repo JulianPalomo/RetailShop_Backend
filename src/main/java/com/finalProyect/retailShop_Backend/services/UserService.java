@@ -38,12 +38,30 @@ public class UserService {
     }
 
     public UserDto createUser(UserDto userDTO) {
-        UserEntity userEntity = userMapper.toEntity(userDTO);
-        userEntity.setActive(true);
-        ///userEntity.setPassword(encryptPassword(userDTO.getPassword())); // Encripta la contraseña
-        UserEntity savedUser = userRepository.save(userEntity);
+        Optional<UserEntity> existingUser = userRepository.findByDni(userDTO.getDni());
+
+        if (existingUser.isPresent()) {
+            UserEntity user = existingUser.get();
+            if (!user.isActive()) {
+                user.setName(userDTO.getName());
+                user.setEmail(userDTO.getEmail());
+                user.setPassword(userDTO.getPassword());
+                user.setAdmin(userDTO.isAdmin());
+                user.setActive(true); // Reactivar usuario
+                UserEntity updatedUser = userRepository.save(user);
+                return userMapper.toDTO(updatedUser);
+            } else {
+                throw new RuntimeException("El usuario con el DNI ya existe y está activo");
+            }
+        }
+
+        // Si no existe, crear uno nuevo
+        UserEntity newUser = userMapper.toEntity(userDTO);
+        newUser.setActive(true);
+        UserEntity savedUser = userRepository.save(newUser);
         return userMapper.toDTO(savedUser);
     }
+
 
     public UserDto updateUser(Long id, UserDto updatedUserDTO) {
         Optional<UserEntity> userOptional = userRepository.findById(id);
@@ -68,6 +86,7 @@ public class UserService {
         {
             UserEntity userEntity = userEntityOptional.get();
             userEntity.setActive(false);
+            userRepository.save(userEntity);
 
         }else {
             throw new RuntimeException("Usuario no encontrado");
@@ -76,9 +95,9 @@ public class UserService {
 
 
     public UserDto authenticate(String dni, String password) {
-        UserEntity user = userRepository.findByDni(dni);
-        if (user != null && user.getPassword().equals(password)) {
-            return userMapper.toDTO(user);
+        Optional<UserEntity> user = userRepository.findByDni(dni);
+        if (user != null && user.get().getPassword().equals(password)) {
+            return userMapper.toDTO(user.get());
         }
         return null;
     }
