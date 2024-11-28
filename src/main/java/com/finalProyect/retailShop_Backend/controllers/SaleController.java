@@ -5,6 +5,7 @@ import com.finalProyect.retailShop_Backend.DTO.SaleDto;
 import com.finalProyect.retailShop_Backend.mappers.SaleMapper;
 import com.finalProyect.retailShop_Backend.repositories.SaleRepository;
 import com.finalProyect.retailShop_Backend.services.SaleService;
+import com.itextpdf.text.DocumentException;
 import io.swagger.models.Response;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -12,6 +13,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
+import java.io.IOException;
 import java.util.List;
 import java.util.Optional;
 
@@ -97,6 +99,15 @@ public class SaleController {
             return ResponseEntity.status(HttpStatus.NOT_FOUND)
                     .body("Venta no encontrada");
         }
+    }
+
+
+    // Endpoint para generar la factura en PDF
+    @GetMapping("/download/{saleId}")
+    public ResponseEntity<byte[]> generateInvoice(@PathVariable Long saleId) throws DocumentException, IOException {
+        // Lógica para obtener la venta (sale) por saleId
+        SaleDto sale = saleService.obtenerVentaPorIdVenta(saleId);
+        return saleService.generateSalePdf(sale);
     }
 
 }

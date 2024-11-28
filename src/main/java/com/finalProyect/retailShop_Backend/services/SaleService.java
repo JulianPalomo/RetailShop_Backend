@@ -1,5 +1,6 @@
 package com.finalProyect.retailShop_Backend.services;
 
+import com.finalProyect.retailShop_Backend.DTO.CartProductDto;
 import com.finalProyect.retailShop_Backend.DTO.SaleDto;
 import com.finalProyect.retailShop_Backend.entities.ProductEntity;
 import com.finalProyect.retailShop_Backend.entities.SaleEntity;
@@ -10,12 +11,29 @@ import com.finalProyect.retailShop_Backend.repositories.CartProductRepository;
 import com.finalProyect.retailShop_Backend.repositories.ProductRepository;
 import com.finalProyect.retailShop_Backend.repositories.SaleRepository;
 import com.finalProyect.retailShop_Backend.repositories.UserRepository;
+
+
+import com.itextpdf.text.*;
+import com.itextpdf.text.pdf.*;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.core.io.ByteArrayResource;
+import org.springframework.core.io.Resource;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.io.ByteArrayOutputStream;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.math.BigDecimal;
+import java.math.RoundingMode;
+import java.text.SimpleDateFormat;
 import java.time.LocalDate;
+import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -106,4 +124,134 @@ public class SaleService {
         )
         ;
     }
+
+
+
+    // Método para generar el PDF de la factura
+    public ResponseEntity<byte[]> generateSalePdf(SaleDto sale) throws DocumentException, DocumentException {
+        // Crear un ByteArrayOutputStream para generar el PDF en memoria
+        ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
+
+        // Crear un PdfDocument y PdfWriter
+        Document document = new Document();
+        PdfWriter.getInstance(document, byteArrayOutputStream);
+
+        document.open();
+
+        // Set page size and margins
+        document.setPageSize(PageSize.A4);
+        document.setMargins(36, 36, 36, 36);
+
+        // Título y contenido
+        addTitle(document);
+        addShopInfo(document);
+        addFacturaInfo(document, sale);
+        addProductsTable(document, sale.getProducts());
+        addTotals(document, sale.getTotal());
+
+        // Cerrar el documento
+        document.close();
+
+        // Configurar los encabezados de la respuesta HTTP para indicar que es un archivo PDF
+        HttpHeaders headers = new HttpHeaders();
+        headers.add(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=invoice_" + sale.getId() +  "_" + sale.getDate() + ".pdf");
+        headers.add(HttpHeaders.CONTENT_TYPE, "application/pdf");
+
+        // Retornar el PDF como un arreglo de bytes en la respuesta
+        return new ResponseEntity<>(byteArrayOutputStream.toByteArray(), headers, HttpStatus.OK);
+    }
+
+    // Método para añadir el título
+    private void addTitle(Document document) throws DocumentException {
+        Paragraph title = new Paragraph("Retail Shop");
+        com.itextpdf.text.Font titleFont = FontFactory.getFont(FontFactory.HELVETICA_BOLD, 14);
+        title.setAlignment(Element.ALIGN_CENTER);
+        document.add(title);
+    }
+
+    // Método para añadir la información de la tienda
+    private void addShopInfo(Document document) throws DocumentException {
+        Font infoFont = FontFactory.getFont(FontFactory.HELVETICA, 8);
+        Paragraph info = new Paragraph("Retail Shop SRL\nCIF: B-70227519\n", infoFont);
+        info.setAlignment(Element.ALIGN_CENTER);
+        document.add(info);
+    }
+
+    // Método para añadir la información de la factura
+    private void addFacturaInfo(Document document, SaleDto sale) throws DocumentException {
+        Paragraph facturaInfo = new Paragraph(new StringBuilder()
+                .append("Factura: ").append(sale.getId()).append("\nFecha: ").append(sale.getDate()).toString());
+        facturaInfo.setAlignment(Element.ALIGN_LEFT);
+        facturaInfo.setSpacingBefore(10);
+        document.add(facturaInfo);
+
+        Paragraph facturaInfo2 = new Paragraph(new StringBuilder()
+                .append("Cliente: ").append(sale.getClientId()).append("\nMedio de Pago: ")
+                .append(sale.getPaymentMethod()).toString());
+        facturaInfo2.setAlignment(Element.ALIGN_RIGHT);
+        facturaInfo2.setSpacingBefore(10);
+        document.add(facturaInfo2);
+
+        document.add(new Paragraph("\n\n"));
+    }
+
+    // Método para añadir la tabla de productos
+    private void addProductsTable(Document document, List<CartProductDto> products) throws DocumentException {
+        PdfPTable table = new PdfPTable(4); // 4 columnas: Cantidad, Descripción, Total, SKU
+        table.setWidthPercentage(100);
+        table.setSpacingBefore(10);
+        table.setSpacingAfter(10);
+
+        // Añadir encabezados de la tabla
+        PdfPCell header1 = new PdfPCell(new Phrase("SKU", FontFactory.getFont(FontFactory.HELVETICA, 8)));
+        header1.setHorizontalAlignment(Element.ALIGN_CENTER);
+        table.addCell(header1);
+
+        PdfPCell header2 = new PdfPCell(new Phrase("Description", FontFactory.getFont(FontFactory.HELVETICA, 8)));
+        header2.setHorizontalAlignment(Element.ALIGN_CENTER);
+        table.addCell(header2);
+
+        PdfPCell header3 = new PdfPCell(new Phrase("Quantity", FontFactory.getFont(FontFactory.HELVETICA, 8)));
+        header3.setHorizontalAlignment(Element.ALIGN_CENTER);
+        table.addCell(header3);
+
+        PdfPCell header4 = new PdfPCell(new Phrase("Sub Total", FontFactory.getFont(FontFactory.HELVETICA, 8)));
+        header4.setHorizontalAlignment(Element.ALIGN_CENTER);
+        table.addCell(header4);
+
+        // Añadir productos y sus precios a la tabla
+        for (CartProductDto product : products) {
+            table.addCell(new PdfPCell(new Phrase(product.getSku(), FontFactory.getFont(FontFactory.HELVETICA, 8))));
+            table.addCell(new PdfPCell(new Phrase(product.getDescription(), FontFactory.getFont(FontFactory.HELVETICA, 8))));
+            table.addCell(new PdfPCell(new Phrase(String.valueOf(product.getQuantity()), FontFactory.getFont(FontFactory.HELVETICA, 8))));
+            table.addCell(new PdfPCell(new Phrase("$" + product.getUnitPrice(), FontFactory.getFont(FontFactory.HELVETICA, 8))));
+        }
+
+        // Añadir la tabla al documento
+        document.add(table);
+    }
+
+    // Método para añadir los totales
+    private void addTotals(Document document, BigDecimal total) throws DocumentException {
+        BigDecimal baseIVA = total.multiply(BigDecimal.valueOf(0.21)); // IVA base 21%
+        BigDecimal subTotal = total.subtract(baseIVA);
+
+        // Redondear los valores a dos decimales
+        baseIVA = baseIVA.setScale(2, RoundingMode.HALF_UP);
+        subTotal = subTotal.setScale(2, RoundingMode.HALF_UP);
+
+        // Añadir total
+        Font infoFont = FontFactory.getFont(FontFactory.HELVETICA, 8);
+        Paragraph totalParagraph = new Paragraph(
+                "IVA 21%: $" + baseIVA +
+                        "\nSubtotal: $" + subTotal +
+                        "\nTotal: $" + total.setScale(2, RoundingMode.HALF_UP),
+                infoFont
+        );
+        totalParagraph.setAlignment(Element.ALIGN_RIGHT);
+        document.add(totalParagraph);
+    }
+
+
+
 }
