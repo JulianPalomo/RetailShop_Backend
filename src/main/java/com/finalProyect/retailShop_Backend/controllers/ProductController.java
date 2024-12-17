@@ -4,6 +4,9 @@ import com.finalProyect.retailShop_Backend.DTO.ProductDto;
 import com.finalProyect.retailShop_Backend.exceptions.ProductNotFoundException;
 import com.finalProyect.retailShop_Backend.services.ProductService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -35,12 +38,16 @@ public class ProductController {
             @ApiResponse(responseCode = "404", description = "No se encontraron productos que coincidan con los filtros"),
             @ApiResponse(responseCode = "500", description = "Error interno del servidor")
     })
-    public ResponseEntity<List<ProductDto>> getAllProducts(
+    public ResponseEntity<Page<ProductDto>> getAllProducts(
             @RequestParam(required = false) String sku,
             @RequestParam(required = false) String description,
-            @RequestParam(required = false) String category) {
+            @RequestParam(required = false) String category,
+            @RequestParam() int pageSize,
+            @RequestParam int pageNumber
+            ) {
+        Pageable pageable = PageRequest.of(pageNumber,pageSize);
 
-        List<ProductDto> products = productService.getAllProducts(sku, description, category);
+        Page<ProductDto> products = productService.getAllProducts(sku, description, category, pageable);
         if (products.isEmpty()) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
         }

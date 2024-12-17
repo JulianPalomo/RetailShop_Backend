@@ -1,13 +1,18 @@
 package com.finalProyect.retailShop_Backend.services;
 
 import com.finalProyect.retailShop_Backend.DTO.ProductDto;
+import com.finalProyect.retailShop_Backend.Specification.ProductSpecification;
 import com.finalProyect.retailShop_Backend.entities.CategoryEntity;
 import com.finalProyect.retailShop_Backend.entities.ProductEntity;
 import com.finalProyect.retailShop_Backend.exceptions.ProductNotFoundException;
 import com.finalProyect.retailShop_Backend.mappers.ProductMapper;
 import com.finalProyect.retailShop_Backend.repositories.CategoryRepository;
 import com.finalProyect.retailShop_Backend.repositories.ProductRepository;
+
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -27,17 +32,17 @@ public class ProductService {
     public ProductService() {
     }
 
-    public List<ProductDto> getAllProducts(String sku, String name, String category) {
-        List<ProductEntity> productEntities = productRepository.findAll();
+    public Page<ProductDto> getAllProducts(String sku, String name, String category, Pageable pageable) {
+        Specification<ProductEntity> spec = Specification.where(ProductSpecification.isActiveTrue())
+                .and(ProductSpecification.skuLike(sku))
+                .and(ProductSpecification.nameLike(name))
+                .and(ProductSpecification.categoryLike(category));
 
-        return productEntities.stream()
-                .filter(ProductEntity::getIsActive) // Filtra solo productos activos
-                .filter(product -> (sku == null || product.getSku().equals(sku)))
-                .filter(product -> (name == null || product.getName().toLowerCase().contains(name.toLowerCase())))
-                .filter(product -> (category == null || product.getCategory().getName().toLowerCase().contains(category.toLowerCase())))
-                .map(productMapper::toDto)
-                .collect(Collectors.toList());
+        Page<ProductEntity> productPage = productRepository.findAll(spec, pageable);
+
+        return productPage.map(productMapper::toDto);
     }
+
 
     public ProductDto createProduct(ProductDto productDto) {
         CategoryEntity category = categoryRepository.findByName(productDto.getCategory().getName())
