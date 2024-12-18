@@ -178,22 +178,56 @@ public class SaleService {
     }
 
     // Método para añadir la información de la factura
+// Método para añadir la información de la factura
     private void addFacturaInfo(Document document, SaleDto sale) throws DocumentException {
-        Paragraph facturaInfo = new Paragraph(new StringBuilder()
-                .append("Factura: ").append(sale.getId()).append("\nFecha: ").append(sale.getDate()).toString());
-        facturaInfo.setAlignment(Element.ALIGN_LEFT);
-        facturaInfo.setSpacingBefore(10);
-        document.add(facturaInfo);
+        // Añadir un párrafo vacío con espaciado antes de los detalles de la factura
+        Paragraph espacio = new Paragraph();
+        espacio.setSpacingBefore(20); // Ajusta este valor según el espaciado deseado
+        document.add(espacio);
 
-        Paragraph facturaInfo2 = new Paragraph(new StringBuilder()
-                .append("Cliente: ").append(sale.getClientId()).append("\nMedio de Pago: ")
-                .append(sale.getPaymentMethod()).toString());
-        facturaInfo2.setAlignment(Element.ALIGN_RIGHT);
-        facturaInfo2.setSpacingBefore(10);
-        document.add(facturaInfo2);
+        // Información de la factura alineada a la izquierda
+        Paragraph facturaInfoIzquierda = new Paragraph(
+                "Invoice Nr: " + sale.getId() + "\nDate: " + sale.getDate(),
+                FontFactory.getFont(FontFactory.HELVETICA, 10)
+        );
+        facturaInfoIzquierda.setAlignment(Element.ALIGN_LEFT);
 
-        document.add(new Paragraph("\n\n"));
+        // Información del cliente alineada a la derecha
+        Paragraph facturaInfoDerecha = new Paragraph(
+                "Client ID: " + sale.getClientId() + "\nPayment Method: " + sale.getPaymentMethod(),
+                FontFactory.getFont(FontFactory.HELVETICA, 10)
+        );
+        facturaInfoDerecha.setAlignment(Element.ALIGN_RIGHT);
+
+        // Crear una tabla con una fila y dos columnas para alinear la información en la misma línea
+        PdfPTable table = new PdfPTable(2);
+        table.setWidthPercentage(100);
+        table.setWidths(new float[]{1, 1}); // Ancho de las columnas
+
+        // Celda para la información alineada a la izquierda
+        PdfPCell cellLeft = new PdfPCell();
+        cellLeft.addElement(facturaInfoIzquierda);
+        cellLeft.setBorder(Rectangle.NO_BORDER);
+        cellLeft.setHorizontalAlignment(Element.ALIGN_LEFT);
+
+        // Celda para la información alineada a la derecha
+        PdfPCell cellRight = new PdfPCell();
+        cellRight.addElement(facturaInfoDerecha);
+        cellRight.setBorder(Rectangle.NO_BORDER);
+        cellRight.setHorizontalAlignment(Element.ALIGN_RIGHT);
+
+        // Añadir las celdas a la tabla
+        table.addCell(cellLeft);
+        table.addCell(cellRight);
+
+        // Añadir la tabla al documento
+        document.add(table);
+
+        // Añadir un espacio después de la información de la factura
+        document.add(new Paragraph("\n"));
     }
+
+
 
     // Método para añadir la tabla de productos
     private void addProductsTable(Document document, List<CartProductDto> products) throws DocumentException {

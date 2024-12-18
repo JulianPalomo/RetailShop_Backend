@@ -70,7 +70,7 @@ public class UserService {
             user.setName(updatedUserDTO.getName());
             user.setDni(updatedUserDTO.getDni());
             user.setEmail(updatedUserDTO.getEmail());
-            user.setAdmin(updatedUserDTO.isAdmin());
+            user.setAdmin(id == 1);
             user.setPassword(updatedUserDTO.getPassword());
             UserEntity updatedUser = userRepository.save(user);
             return userMapper.toDTO(updatedUser);
