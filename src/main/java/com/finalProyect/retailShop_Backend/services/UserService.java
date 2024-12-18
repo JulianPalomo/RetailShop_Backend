@@ -1,49 +1,106 @@
 package com.finalProyect.retailShop_Backend.services;
 
-import com.finalProyect.retailShop_Backend.entity.UserEntity;
+import com.finalProyect.retailShop_Backend.DTO.UserDto;
+import com.finalProyect.retailShop_Backend.entities.persons.UserEntity;
+import com.finalProyect.retailShop_Backend.exceptions.NotFoundException;
+import com.finalProyect.retailShop_Backend.exceptions.ProductNotFoundException;
+import com.finalProyect.retailShop_Backend.mappers.UserMapper;
 import com.finalProyect.retailShop_Backend.repositories.UserRepository;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Service
 public class UserService {
 
-    @Autowired
-    private UserRepository userRepository;
+    private final UserRepository userRepository;
+    private final UserMapper userMapper;
 
-    public List<UserEntity> getAllUsers() {
-        return userRepository.findAll();
-    }
+    public UserService(UserRepository userRepository, UserMapper userMapper) {
+        this.userRepository = userRepository;
+        this.userMapper = userMapper;{
 
-    public Optional<UserEntity> getUserById(Long id) {
-        return userRepository.findById(id);
-    }
-
-    public UserEntity createUser(UserEntity user) {
-        return userRepository.save(user);
-    }
-
-    public UserEntity updateUser(Long id, UserEntity updatedUser) {
-        Optional<UserEntity> userOptional = userRepository.findById(id);
-        if (userOptional.isPresent()) {
-            UserEntity user = userOptional.get();
-            user.setName(updatedUser.getName());
-            user.setEmail(updatedUser.getEmail());
-            user.setPassword(updatedUser.getPassword());
-            return userRepository.save(user);
-        } else {
-            return null; // o lanzar una excepción
         }
     }
 
+    public List<UserDto> getAllUsers() {
+        return userRepository.findAll().stream()
+                .filter(UserEntity::isActive)
+                .map(userMapper::toDTO)
+                .collect(Collectors.toList());
+    }
+
+    public UserDto getUserById(Long id) {
+        Optional<UserEntity> user = userRepository.findById(id);
+        return user.map(userMapper::toDTO).orElse(null);
+    }
+
+    public UserDto createUser(UserDto userDTO) {
+        Optional<UserEntity> existingUser = userRepository.findByDni(userDTO.getDni());
+
+        if (existingUser.isPresent()) {
+            UserEntity user = existingUser.get();
+            if (!user.isActive()) {
+                user.setName(userDTO.getName());
+                user.setEmail(userDTO.getEmail());
+                user.setPassword(userDTO.getPassword());
+                user.setAdmin(userDTO.isAdmin());
+                user.setActive(true); // Reactivar usuario
+                UserEntity updatedUser = userRepository.save(user);
+                return userMapper.toDTO(updatedUser);
+            } else {
+                throw new RuntimeException("El usuario con el DNI ya existe y está activo");
+            }
+        }
+
+        // Si no existe, crear uno nuevo
+        UserEntity newUser = userMapper.toEntity(userDTO);
+        newUser.setActive(true);
+        UserEntity savedUser = userRepository.save(newUser);
+        return userMapper.toDTO(savedUser);
+    }
+
+
+    public UserDto updateUser(Long id, UserDto updatedUserDTO) {
+        Optional<UserEntity> userOptional = userRepository.findById(id);
+        if (userOptional.isPresent()) {
+            UserEntity user = userOptional.get();
+            user.setName(updatedUserDTO.getName());
+            user.setDni(updatedUserDTO.getDni());
+            user.setEmail(updatedUserDTO.getEmail());
+            user.setAdmin(id == 1);
+            user.setPassword(updatedUserDTO.getPassword());
+            UserEntity updatedUser = userRepository.save(user);
+            return userMapper.toDTO(updatedUser);
+        } else {
+            new NotFoundException("User no encontrado" );
+        }
+        return updatedUserDTO;
+    }
+
     public void deleteUser(Long id) {
-        userRepository.deleteById(id);
+        Optional<UserEntity> userEntityOptional = userRepository.findById(id);
+        if(userEntityOptional.isPresent())
+        {
+            UserEntity userEntity = userEntityOptional.get();
+            userEntity.setActive(false);
+            userRepository.save(userEntity);
+
+        }else {
+            throw new RuntimeException("Usuario no encontrado");
+        }
     }
-    public List<UserEntity> getUserByName(String name) {
-        return userRepository.findByName(name);
+
+
+    public UserDto authenticate(String dni, String password) {
+        Optional<UserEntity> user = userRepository.findByDni(dni);
+        if (user != null && user.get().getPassword().equals(password)) {
+            return userMapper.toDTO(user.get());
+        }
+        return null;
     }
+
 
 }
