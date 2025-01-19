@@ -7,9 +7,10 @@ import java.math.BigDecimal;
 
 @Entity
 @Table(name = "sale_products")
-@Data
 @NoArgsConstructor
 @AllArgsConstructor
+@Getter
+@Setter
 @Builder
 public class CartProductEntity {
 
