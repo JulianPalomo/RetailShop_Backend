@@ -59,7 +59,7 @@ public class SaleService {
         UserEntity user = userRepository.findById(saleDto.getEmployeeId())
                 .orElseThrow(() -> new RuntimeException("Empleado no encontrado"));
 
-        // 2. Validar y mapear productos desde el DTO
+        /*// 2. Validar y mapear productos desde el DTO
         List<CartProductEntity> cartProductEntities = saleDto.getProducts().stream()
                 .map(productDto -> {
                     ProductEntity productEntity = productRepository.findById(productDto.getId())
@@ -73,7 +73,39 @@ public class SaleService {
                             .subTotal(productDto.getSubTotal())
                             .build();
                 }).collect(Collectors.toList());
+        */
 
+        List<CartProductEntity> cartProductEntities = saleDto.getProducts().stream()
+                .map(productDto -> {
+
+                    ProductEntity productEntity = productRepository.findById(productDto.getId())
+                            .orElseThrow(() -> new RuntimeException(
+                                    "Producto no encontrado con ID: " + productDto.getId()
+                            ));
+
+                    if (productEntity.getStock() < productDto.getQuantity()) {
+                        throw new RuntimeException(
+                                "Stock insuficiente para el producto: " + productEntity.getName()
+                        );
+                    }
+                    productEntity.setStock(
+                            productEntity.getStock() - productDto.getQuantity()
+                    );
+
+                    productRepository.save(productEntity);
+
+                    return CartProductEntity.builder()
+                            .product(productEntity)
+                            .quantity(productDto.getQuantity())
+                            .unitPrice(productEntity.getPrice())
+                            .subTotal(
+                                    productEntity.getPrice()
+                                            .multiply(BigDecimal.valueOf(productDto.getQuantity()))
+                                            .setScale(2, RoundingMode.HALF_UP)
+                            )
+                            .build();
+
+                }).collect(Collectors.toList());
         // 3. Crear y persistir la venta
         SaleEntity saleEntity = SaleEntity.builder()
                 .user(user)
@@ -89,6 +121,7 @@ public class SaleService {
 
         // Guardar la venta y productos asociados
         SaleEntity savedSale = saleRepository.save(saleEntity);
+
 
         // 4. Retornar como DTO
         return saleMapper.toDto(savedSale);
