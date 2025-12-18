@@ -42,9 +42,20 @@ public class UserController {
         return updatedUser != null ? ResponseEntity.ok(updatedUser) : ResponseEntity.notFound().build();
     }
 
+    /*
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> deleteUser(@PathVariable Long id) {
         userService.deleteUser(id);
         return ResponseEntity.noContent().build();
     }
+     */
+
+    @DeleteMapping("/{id}")
+    public ResponseEntity<Void> deleteUser(
+            @PathVariable Long id,
+            @RequestParam Long loggedUserId) {
+        userService.deleteUser(id, loggedUserId);
+        return ResponseEntity.noContent().build();
+    }
+
 }

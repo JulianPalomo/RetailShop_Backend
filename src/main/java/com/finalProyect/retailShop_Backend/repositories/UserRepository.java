@@ -14,4 +14,6 @@ public interface UserRepository extends JpaRepository<UserEntity, Long> {
     Optional<UserEntity> findByDni(String dni);
 
     Optional<UserEntity> findById(Long id);
+
+    long countByIsAdminTrue();
 }

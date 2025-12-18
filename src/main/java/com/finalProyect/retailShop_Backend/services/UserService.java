@@ -80,6 +80,31 @@ public class UserService {
         return updatedUserDTO;
     }
 
+    public void deleteUser(Long id, Long loggedUserId) {
+
+        UserEntity loggedUser = userRepository.findById(loggedUserId)
+                .orElseThrow(() -> new RuntimeException("Usuario inválido"));
+
+        if (!loggedUser.isAdmin()) {
+            throw new RuntimeException("No tenés permisos");
+        }
+
+        if (id.equals(loggedUserId)) {
+            throw new RuntimeException("No podés eliminarte a vos mismo");
+        }
+
+        long admins = userRepository.countByIsAdminTrue();
+
+        UserEntity userToDelete = userRepository.findById(id).orElseThrow();
+
+        if (userToDelete.isAdmin() && admins <= 1) {
+            throw new RuntimeException("No se puede eliminar el último admin");
+        }
+
+        userRepository.deleteById(id);
+    }
+
+    /*
     public void deleteUser(Long id) {
         Optional<UserEntity> userEntityOptional = userRepository.findById(id);
         if(userEntityOptional.isPresent())
@@ -92,6 +117,7 @@ public class UserService {
             throw new RuntimeException("Usuario no encontrado");
         }
     }
+     */
 
 
     public UserDto authenticate(String dni, String password) {

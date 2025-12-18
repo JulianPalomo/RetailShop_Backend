@@ -22,7 +22,7 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/api/products")
-@CrossOrigin(origins = "http://localhost:4200") // Asegúrate de que la URL del frontend sea correcta
+@CrossOrigin(origins = "http://localhost:4200") // la URL del frontend
 
 public class ProductController {
 
@@ -42,9 +42,9 @@ public class ProductController {
             @RequestParam(required = false) String sku,
             @RequestParam(required = false) String description,
             @RequestParam(required = false) String category,
-            @RequestParam() int pageSize,
-            @RequestParam int pageNumber
-            ) {
+            @RequestParam(defaultValue = "10") int pageSize,
+            @RequestParam(defaultValue = "0") int pageNumber) {
+
         Pageable pageable = PageRequest.of(pageNumber,pageSize);
 
         Page<ProductDto> products = productService.getAllProducts(sku, description, category, pageable);
